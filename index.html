@@ -1412,10 +1412,13 @@ body.dark-mode thead th {
                 <h2>Lojas Cadastradas</h2>
                 <h3 id="subtitulo-lojas" style="font-weight: 400; font-size: 1rem; margin-top: -15px; margin-bottom: 20px;"></h3>
                 <div class="table-wrapper">
-                    <table id="tabela-lojas">
-                        <thead><tr><th>Loja</th><th>Bloco</th><th>Data Inauguração</th><th>GRC (Gerente)</th><th>Ações</th></tr></thead>
-                        <tbody id="tabela-lojas-body"></tbody>
-                    </table>
+                    <!-- Adicione este DIV para habilitar o scroll -->
+                    <div class="table-container">
+                        <table id="tabela-lojas">
+                            <thead><tr><th>Loja</th><th>Bloco</th><th>Data Inauguração</th><th>GRC (Gerente)</th><th>Ações</th></tr></thead>
+                            <tbody id="tabela-lojas-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
