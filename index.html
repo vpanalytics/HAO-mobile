@@ -1426,18 +1426,21 @@ body.dark-mode thead th {
             <section id="produtos" class="tab-content">
                 <h2>Produtos Cadastrados</h2>
                 <div class="table-wrapper">
-                    <table id="tabela-produtos">
-                        <thead>
-                            <tr>
-                                <th>Modelo</th>
-                                <th>Valor</th>
-                                <th>Ação</th>
-                                <th>Última Alteração</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="produtos-lista-body"></tbody>
-                    </table>
+                    <!-- Adicione este DIV para habilitar o scroll -->
+                    <div class="table-container">
+                        <table id="tabela-produtos">
+                            <thead>
+                                <tr>
+                                    <th>Modelo</th>
+                                    <th>Valor</th>
+                                    <th>Ação</th>
+                                    <th>Última Alteração</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produtos-lista-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
