@@ -1067,7 +1067,31 @@ body.dark-mode thead th {
         gap: 15px;
     }
 
+   #tabela-produtos {
+        table-layout: auto; /* Permite que o navegador calcule a largura das colunas */
+        width: 100%; /* Garante que a tabela tente ocupar o espaço disponível */
+    }
 
+    /* Define uma largura mínima para cada coluna para evitar que fiquem espremidas */
+    #tabela-produtos th,
+    #tabela-produtos td {
+        white-space: nowrap; /* Impede que o texto quebre, forçando o scroll */
+    }
+
+    #tabela-produtos th:nth-child(1),
+    #tabela-produtos td:nth-child(1) { min-width: 150px; } /* Modelo */
+
+    #tabela-produtos th:nth-child(2),
+    #tabela-produtos td:nth-child(2) { min-width: 120px; } /* Valor */
+
+    #tabela-produtos th:nth-child(3),
+    #tabela-produtos td:nth-child(3) { min-width: 70px; }  /* Ação */
+
+    #tabela-produtos th:nth-child(4),
+    #tabela-produtos td:nth-child(4) { min-width: 150px; } /* Última Alteração */
+
+    #tabela-produtos th:nth-child(5),
+    #tabela-produtos td:nth-child(5) { min-width: 70px; }  /* Status */
     /* --- AJUSTES NOS GRÁFICOS --- */
 
     /* Mantém 1 gráfico por fileira */
