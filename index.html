@@ -1122,7 +1122,17 @@ body.dark-mode thead th {
         height: 450px; /* Define a mesma altura dos outros gráficos de barra */
     }
 
+   /* Força o contêiner principal do gráfico a se comportar como um bloco flexível */
+    .chart-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
 
+    /* Garante que o contêiner do canvas (com o scroll) ocupe o espaço restante */
+    .chart-canvas-container {
+        flex-grow: 1; /* Faz o contêiner crescer para preencher a altura */
+        min-height: 0; /* Resolve um bug de flexbox em alguns navegadores */
+    }
 
     /* --- 5. AJUSTES NOS FORMULÁRIOS (VENDAS, LOJAS) --- */
     
@@ -2739,7 +2749,7 @@ function updateVendaDiaChart(vendasFiltradas) {
         return acc;
     }, {});
     const sorted = Object.entries(vendasPorDia).sort(([a], [b]) => new Date(a) - new Date(b));
-
+    const isMobile = window.innerWidth <= 768;
     const isDarkMode = document.body.classList.contains('dark-mode');
 
     // O gradiente não é mais necessário para a cor de fundo principal
@@ -2769,7 +2779,16 @@ function updateVendaDiaChart(vendasFiltradas) {
         },
         scales: {
             y: { grid: { display: true, drawBorder: false }, ticks: { display: true } },
-            x: { grid: { display: false } }
+            x: { 
+                grid: { display: false },
+                ticks: {
+                    // SE FOR MOBILE, GIRA OS RÓTULOS para não sobrepor
+                    maxRotation: isMobile ? 45 : 0, // Gira 45 graus no mobile
+                    minRotation: isMobile ? 45 : 0,
+                    autoSkip: true, // Permite que o Chart.js pule alguns rótulos se necessário
+                    maxTicksLimit: isMobile ? 8 : 20 // Limita o número de datas mostradas no mobile
+                }
+            }
         }
     };
 
