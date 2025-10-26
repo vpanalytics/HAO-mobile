@@ -998,124 +998,134 @@ body.dark-mode thead th {
     }
 
 /* ================================================================== */
-/* ================================================================== */
-/*        INÍCIO DAS REGRAS DE LAYOUT RESPONSIVO (MOBILE)             */
-/* ================================================================== */
+/*        REGRAS DE LAYOUT RESPONSIVO (MOBILE) - VERSÃO MELHORADA     */
 /* ================================================================== */
 
-/* Aplica estes estilos em telas com largura máxima de 768px (padrão para tablets e celulares) */
 @media (max-width: 768px) {
 
-    /* --- AJUSTES NA TELA DE LOGIN --- */
-
-    /* 1. Centraliza o container de login e permite scroll */
-    .login-screen-wrapper {
-        display: block; /* Remove o flexbox para permitir scroll */
-        padding: 20px 0; /* Espaço no topo e na base */
-        animation: none; /* Remove a animação de fundo para economizar bateria */
-    }
-    .login-page-container {
-        flex-direction: column; /* Empilha a imagem e o formulário */
-        margin: 20px auto; /* Centraliza o card na tela */
-    }
-    .login-container {
-        padding: 30px; /* Reduz o padding interno no mobile */
-    }
-    .login-image-container {
-        max-height: 250px; /* Limita a altura da imagem no mobile */
-    }
+    /* --- AJUSTES GERAIS DE ESPAÇAMENTO --- */
+    .app-container { padding: 10px; }
+    .filters-container { flex-direction: column; gap: 20px; padding: 20px; }
 
 
-    /* --- AJUSTES NO CABEÇALHO PRINCIPAL (HEADER) --- */
-    
-    /* 2. Reorganiza o cabeçalho: Logos, Título, Navegação */
+    /* --- 1. MELHORIAS NO CABEÇALHO PRINCIPAL (HEADER) --- */
+
+    /* Container principal do header */
     .main-header {
-        flex-direction: column; /* Empilha todos os elementos */
-        gap: 20px; /* Espaço entre os blocos (logos, navegação, etc) */
+        flex-direction: column; /* Mantém o empilhamento dos blocos */
+        align-items: flex-start; /* ALINHA TUDO À ESQUERDA */
+        gap: 20px;
         padding: 20px;
     }
+
+    /* Bloco de Logos e Título */
     .header-title-container {
         flex-direction: column; /* Empilha logos e título */
+        align-items: flex-start; /* Alinha o conteúdo à esquerda */
         gap: 15px;
     }
-    .header-controls {
-        flex-direction: column; /* Empilha navegação e botões (tema/sair) */
-        width: 100%;
-        gap: 15px;
-    }
-    .main-header nav ul {
-        justify-content: center; /* Centraliza os itens da navegação */
-        flex-wrap: wrap; /* Permite que os botões quebrem a linha se não couberem */
-        width: 100%;
-    }
-
-
-    /* --- AJUSTES NOS CARDS E GRÁFICOS --- */
-
-    /* 3. Cards: 1 por fileira */
-    .cards-container {
-        grid-template-columns: 1fr; /* Força uma única coluna */
-        gap: 20px; /* Reduz o espaçamento */
-    }
-
-    /* 4. Gráficos: 1 por fileira */
-    .charts-container,
-    .charts-container-3-cols {
-        grid-template-columns: 1fr; /* Força uma única coluna para todos os contêineres de gráficos */
+    
+    /* ADICIONADO: Container apenas para as logos */
+    .header-logos {
+        display: flex;
+        align-items: center;
         gap: 20px;
     }
-    .charts-row {
-        flex-direction: column; /* Empilha os gráficos de Venda Mensal e Anual */
+
+    /* Bloco de Controles (Navegação e Botões) */
+    .header-controls {
+        flex-direction: column; /* Empilha a navegação e os botões de ação */
+        align-items: flex-start; /* Alinha tudo à esquerda */
+        width: 100%;
+        gap: 15px;
     }
 
-
-    /* --- AJUSTES NOS FORMULÁRIOS (VENDAS E LOJAS) --- */
+    /* Navegação */
+    .main-header nav ul {
+        justify-content: flex-start; /* Alinha os botões de navegação à esquerda */
+        flex-wrap: wrap;
+        width: 100%;
+    }
     
-    /* 5. Formulários: 1 campo por fileira */
-    form {
-        grid-template-columns: 1fr; /* Força uma única coluna para todos os campos */
+    /* ADICIONADO: Container para os botões de Tema e Sair */
+    .header-action-buttons {
+        display: flex;
+        gap: 15px;
     }
-    /* Ajusta o posicionamento dos botões de ação nos formulários */
+
+
+    /* --- AJUSTES NOS GRÁFICOS --- */
+
+    /* Mantém 1 gráfico por fileira */
+    .cards-container,
+    .charts-container,
+    .charts-container-3-cols {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* 2. SCROLL HORIZONTAL PARA GRÁFICOS DE LINHA */
+    #venda-dia-container,
+    #venda-semana-container {
+        overflow-x: auto; /* Adiciona o scroll no eixo X */
+        -webkit-overflow-scrolling: touch;
+    }
+    /* Força o canvas a ter uma largura mínima para que o scroll funcione */
+    #venda-dia-chart,
+    #venda-semana-chart {
+        min-width: 600px;
+    }
+
+    /* 3. ALTURA CORRETA PARA GRÁFICOS MENSAL/ANUAL */
+    .charts-row {
+        flex-direction: column; /* Empilha os gráficos */
+    }
+    .chart-wrapper-flex {
+        height: 450px; /* Define a mesma altura dos outros gráficos de barra */
+    }
+
+
+
+    /* --- 5. AJUSTES NOS FORMULÁRIOS (VENDAS, LOJAS) --- */
+    
+    /* Garante 1 campo por fileira */
+    form {
+        grid-template-columns: 1fr;
+    }
     .form-vendas-grid .form-actions,
     .form-actions-loja-ajustado {
-        grid-column: 1 / -1; /* Faz os botões ocuparem a largura total */
-        justify-content: center; /* Centraliza os botões */
+        grid-column: 1 / -1;
+        justify-content: center;
     }
-    
+    /* Garante que os campos de lançamento de venda fiquem em ordem */
+    #form-lancamento .form-group {
+        grid-column: 1 / -1; /* Força cada campo a ocupar a linha inteira */
+    }
 
-    /* --- AJUSTES NAS TABELAS (PRODUTOS, VENDAS, ETC.) --- */
 
-    /* 6. Tabelas: Scroll horizontal */
-    /* A classe .table-container já tem overflow, mas garantimos o comportamento */
+    /* --- 6. AJUSTES NAS TABELAS --- */
+
     .table-container {
         overflow-x: auto; /* Garante o scroll lateral */
-        -webkit-overflow-scrolling: touch; /* Melhora a experiência de scroll em iOS */
+        -webkit-overflow-scrolling: touch;
     }
-    /* Reduz o padding das células para caber mais informação na tela */
     th, td {
         padding: 12px 10px;
         font-size: 0.9rem;
     }
-    /* Ajuste específico para a tabela de detalhamento para não ficar muito larga */
+    /* Ajustes específicos para a tabela de detalhamento */
     #tabela-detalhe-vendas th, 
-    #tabela-detalhe-vendas td {
-        min-width: 60px; /* Reduz a largura mínima das colunas */
-    }
-    #tabela-detalhe-vendas .row-header-dia {
-        min-width: 120px; /* Reduz a largura da primeira coluna fixa */
-    }
+    #tabela-detalhe-vendas td { min-width: 60px; }
+    #tabela-detalhe-vendas .row-header-dia { min-width: 120px; }
 
 
-    /* --- AJUSTES GERAIS DE ESPAÇAMENTO --- */
-    .app-container {
-        padding: 10px; /* Reduz o padding geral da aplicação */
-    }
-    .filters-container {
-        flex-direction: column; /* Empilha os filtros */
-        gap: 20px;
-        padding: 20px;
-    }
+    /* --- AJUSTES NA TELA DE LOGIN (sem alterações nesta rodada) --- */
+    .login-screen-wrapper { display: block; padding: 20px 0; animation: none; }
+    .login-page-container { flex-direction: column; margin: 20px auto; }
+    .login-container { padding: 30px; }
+    .login-image-container { max-height: 250px; }
 }
+
 
 
 </style>
