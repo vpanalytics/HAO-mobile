@@ -1040,11 +1040,25 @@ body.dark-mode thead th {
         gap: 15px;
     }
 
-    /* Navegação */
+   /* Transforma a lista <ul> em um container de grid */
     .main-header nav ul {
-        justify-content: flex-start; /* Alinha os botões de navegação à esquerda */
-        flex-wrap: wrap;
-        width: 100%;
+        display: grid; /* Usa o layout de Grid */
+        grid-template-columns: 1fr 1fr; /* Cria duas colunas de largura igual */
+        gap: 10px; /* Espaço entre os botões */
+        width: 100%; /* Ocupa toda a largura disponível */
+        padding: 0; /* Remove o padding padrão da lista */
+    }
+
+    /* Faz o item da lista <li> ocupar todo o espaço do seu grid-cell */
+    .main-header nav li {
+        display: contents; /* Remove o <li> do fluxo de layout, passando as propriedades do grid para o <a> */
+    }
+
+    /* Estiliza o botão <a> para preencher o espaço e centralizar o texto */
+    .main-header nav a {
+        width: 100%; /* Ocupa 100% da largura da célula do grid */
+        text-align: center; /* Centraliza o texto dentro do botão */
+        box-sizing: border-box; /* Garante que o padding não afete a largura total */
     }
     
     /* ADICIONADO: Container para os botões de Tema e Sair */
@@ -1175,25 +1189,16 @@ body.dark-mode thead th {
             <div class="header-controls">
                 <nav>
                     <!-- ========================================================== -->
-                    <!--                    INÍCIO DA ALTERAÇÃO                     -->
+                    <!--     VOLTANDO PARA UMA LISTA ÚNICA DE BOTÕES (HTML)         -->
                     <!-- ========================================================== -->
-
-                    <!-- Fileira 1: Dashboard e Vendas -->
                     <ul>
                         <li><a href="#dashboard" class="nav-tab active-tab" data-tab="dashboard">Dashboard</a></li>
                         <li><a href="#vendas" class="nav-tab" data-tab="vendas">Vendas</a></li>
-                    </ul>
-                    
-                    <!-- Fileira 2: Lojas e Produtos -->
-                    <ul>
                         <li><a href="#lojas" class="nav-tab" data-tab="lojas">Lojas</a></li>
                         <li><a href="#produtos" class="nav-tab" data-tab="produtos">Produtos</a></li>
                     </ul>
-
-                    <!-- ========================================================== -->
-                    <!--                     FIM DA ALTERAÇÃO                       -->
-                    <!-- ========================================================== -->
                 </nav>
+
                 <button id="theme-toggle-btn" title="Alternar tema">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.7.79z"></path></svg>
                 </button>
