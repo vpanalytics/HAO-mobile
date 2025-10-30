@@ -2063,11 +2063,13 @@ function renderTabelaVendas() {
                 } else {
                     // MODO CADASTRO: Adiciona um novo documento de venda no Firebase
                     await db.collection('vendas').add(vendaData);
+                
                 }
 
                 // Após salvar, recarrega todos os dados para atualizar os dashboards e tabelas
                 await loadDataFromFirebase();
-                renderTabelaVendas(); 
+                resetVendaForm(); 
+                
             } catch (error) {
                 console.error("Erro ao salvar venda no Firebase:", error);
                 alert("Ocorreu um erro ao salvar a venda. Verifique o console para mais detalhes.");
@@ -2168,17 +2170,30 @@ function renderTabelaVendas() {
         lojaSuccessMsg.classList.add('hidden');
     }
 
-    function resetVendaForm() {
-        formLancamento.reset();
-        vendaEditId.value = '';
-        formLancamento.classList.remove('editing-mode');
-        vendaFormTitle.textContent = 'Lançar Nova Venda';
-        vendaSubmitBtn.textContent = 'Lançar Venda';
-        cancelEditVendaBtn.classList.add('hidden');
-        vendaDataInput.valueAsDate = new Date();
-        vendaTotalInput.value = '';
-        vendaTipoLojaDisplay.value = '';
-    }
+function resetVendaForm() {
+    // 1. Limpa todos os campos do formulário
+    formLancamento.reset();
+    
+    // 2. Reseta o ID de edição (para garantir que o próximo clique seja um "novo" lançamento)
+    vendaEditId.value = '';
+    
+    // 3. Remove a classe de "modo de edição"
+    formLancamento.classList.remove('editing-mode');
+    
+    // 4. Restaura os textos originais do título e do botão
+    vendaFormTitle.textContent = 'Lançar Nova Venda';
+    vendaSubmitBtn.textContent = 'Lançar Venda';
+    
+    // 5. Esconde o botão "Cancelar Edição"
+    cancelEditVendaBtn.classList.add('hidden');
+    
+    // 6. Redefine a data para o dia de hoje (MUITO IMPORTANTE para usabilidade)
+    vendaDataInput.valueAsDate = new Date();
+    
+    // 7. Limpa os campos que não são resetados automaticamente (readonly)
+    vendaTotalInput.value = '';
+    vendaTipoLojaDisplay.value = '';
+}
 
     // --- FUNÇÕES DE EDIÇÃO E EXCLUSÃO ---
     function editLoja(id) {
