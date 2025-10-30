@@ -190,12 +190,7 @@
     }
 
     .login-image-container {
-        flex: 1.6;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 0%;
-        overflow: hidden;
+        display: none;
     }
 
 
@@ -214,6 +209,7 @@
     .main-header {
         display: flex;
         justify-content: space-between;
+        gap: 40px;
         align-items: center;
         background-color: var(--card-bg-color);
         padding: 15px 30px;
@@ -498,7 +494,7 @@
         display: flex;
         justify-content: flex-end;
         gap: 15px;
-        align-items: center;
+        align-items: flex-end;
     }
     .form-actions button {
         width: auto;
@@ -745,6 +741,20 @@ body.dark-mode thead th {
         color: white;
     }
 
+body.dark-mode .login-page-container {
+        --card-bg-color: #ffffff; /* Fundo sempre branco */
+        --text-color: #172B4D;    /* Cor do texto sempre escura */
+        --secondary-color: #172B4D; /* Cor secundária sempre escura */
+        --border-color: #dfe1e6;   /* Cor da borda sempre clara */
+    }
+    
+    /* Garante que os inputs também não sejam afetados pelo modo escuro */
+    body.dark-mode .login-page-container input {
+        background-color: #ffffff;
+        color: #172B4D;
+        border-color: #dfe1e6;
+    }
+
     body.dark-mode .radio-group { border-color: #4a596a; }
     body.dark-mode .radio-group label { color: #8c9bab; }
     body.dark-mode .radio-group input[type="radio"]:checked + label { background-color: var(--primary-color); color: white; }
@@ -823,6 +833,8 @@ body.dark-mode thead th {
     .chart-canvas-container {
         position: relative;
         flex-grow: 1; /* Faz o contêiner do canvas ocupar o espaço restante */
+        width: 100%;
+        height: 92%;
     }
     .chart-canvas-container canvas {
         position: absolute;
@@ -996,7 +1008,42 @@ body.dark-mode thead th {
     #tabela-detalhe-vendas thead tr:nth-child(3) th {
         top: 90px; /* A terceira linha (Pçs/$) gruda 90px abaixo (altura das duas primeiras) */
     }
+    /* ================================================================== */
+    /*        NOVOS ESTILOS PARA O FILTRO DA TABELA DE DETALHAMENTO     */
+    /* ================================================================== */
+    .multi-select-filter {
+        display: flex;
+        align-items: center;
+        gap: 15px; /* Espaço entre o label "Filtrar Lojas:" e os checkboxes */
+        padding: 10px 0 20px 0; /* Espaçamento vertical */
+        flex-wrap: wrap; /* Permite que os checkboxes quebrem a linha em telas pequenas */
+    }
+    .multi-select-filter label {
+        font-weight: 500;
+        white-space: nowrap; /* Impede que o label principal quebre */
+    }
+    #lojas-checkboxes {
+        display: flex;
+        gap: 20px; /* Espaço entre cada checkbox */
+        flex-wrap: wrap;
+    }
+    #lojas-checkboxes div { /* Contêiner de cada checkbox + label */
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    #lojas-checkboxes label { /* Label de cada loja individual */
+        font-weight: 400;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    #lojas-checkboxes input[type="checkbox"] {
+        width: auto; /* Reseta a largura do input para o tamanho padrão */
+        cursor: pointer;
+    }
 
+
+    
 /* ================================================================== */
 /*        REGRAS DE LAYOUT RESPONSIVO (MOBILE) - VERSÃO MELHORADA     */
 /* ================================================================== */
@@ -1116,30 +1163,29 @@ body.dark-mode thead th {
 
     /* 3. ALTURA CORRETA PARA GRÁFICOS MENSAL/ANUAL */
     .charts-row {
-        flex-direction: column; /* Empilha os gráficos */
+        flex-direction: row; /* Empilha os gráficos */
     }
     .chart-wrapper-flex {
         height: 450px; /* Define a mesma altura dos outros gráficos de barra */
     }
 
-   /* Força o contêiner principal do gráfico a se comportar como um bloco flexível */
-    .chart-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Garante que o contêiner do canvas (com o scroll) ocupe o espaço restante */
-    .chart-canvas-container {
-        flex-grow: 1; /* Faz o contêiner crescer para preencher a altura */
-        min-height: 0; /* Resolve um bug de flexbox em alguns navegadores */
-    }
-
     /* --- 5. AJUSTES NOS FORMULÁRIOS (VENDAS, LOJAS) --- */
     
     /* Garante 1 campo por fileira */
-    form {
+    #form-cadastro-produto {
         grid-template-columns: 1fr;
     }
+
+    /* Força CADA FILHO do formulário a ocupar a linha inteira */
+    #form-cadastro-produto > div {
+        grid-column: 1 / -1 !important; /* !important para garantir a sobreposição */
+    }
+
+    /* Centraliza os botões no contêiner que agora ocupa a largura toda */
+    #form-cadastro-produto .form-actions {
+        justify-content: flex-start;
+    }
+    
     .form-vendas-grid .form-actions,
     .form-actions-loja-ajustado {
         grid-column: 1 / -1;
@@ -1167,14 +1213,30 @@ body.dark-mode thead th {
     #tabela-detalhe-vendas .row-header-dia { min-width: 120px; }
 
 
-    /* --- AJUSTES NA TELA DE LOGIN (sem alterações nesta rodada) --- */
-    .login-screen-wrapper { display: block; padding: 20px 0; animation: none; }
-    .login-page-container { flex-direction: column; margin: 20px auto; }
-    .login-container { padding: 30px; }
-    .login-image-container { max-height: 250px; }
-}
+    .login-screen-wrapper {
+        display: block;            /* Comportamento de bloco padrão, ESSENCIAL para o scroll */
+        position: static;          /* Remove a posição fixa que pode travar o scroll */
+        height: auto;              /* A altura se ajusta ao conteúdo */
+        min-height: 100vh;         /* Garante que o fundo ocupe PELO MENOS a tela inteira */
+        padding: 40px 20px;        /* Adiciona margens internas para o conteúdo não colar nas bordas */
+        box-sizing: border-box;    /* Garante que o padding não cause overflow */
+        animation: none;           /* Desativa a animação no mobile */
+    }
 
+    .login-container {
+        padding: 40px 25px;
+    }
 
+    /* 2. Ajusta o card de login branco */
+    .login-page-container {
+        flex-direction: column;    /* Mantém os itens internos empilhados */
+        margin: auto;              /* Centraliza o card horizontalmente e permite margem vertical automática */
+        width: 100%;               /* Ocupa a largura disponível */
+        max-width: 500px;          /* Limita a largura máxima */
+    }
+        .login-image-container {
+        display: none;
+    }}
 
 </style>
 </head>
@@ -1215,16 +1277,22 @@ body.dark-mode thead th {
     <!-- ======================= TELA PRINCIPAL (HTML  ) ======================= -->
     <div id="app-screen" class="app-container hidden">
         <header class="main-header">
+            <!-- ========================================================== -->
+            <!--            BLOCO 1: TUDO QUE FICA NA ESQUERDA              -->
+            <!-- ========================================================== -->
             <div class="header-title-container">
-                <img src="https://victorpaulovichbueno-gif.github.io/logo-HAO/logohao" alt="Logo Haojue" style="height: 35px;">
-                <img src="https://assets.decocache.com/cvlbinsticiona/883934cf-cd5a-4b86-ac4c-d3504faa99ab/logo-inst-desk.svg" alt="Logo Casa & Vídeo" style="height: 40px;">
+                <div class="header-logos">
+                    <img src="https://victorpaulovichbueno-gif.github.io/logo-HAO/logohao" alt="Logo Haojue" style="height: 35px;">
+                    <img src="https://assets.decocache.com/cvlbinsticiona/883934cf-cd5a-4b86-ac4c-d3504faa99ab/logo-inst-desk.svg" alt="Logo Casa & Vídeo" style="height: 40px;">
+                </div>
                 <h2>Controle de Venda</h2>
             </div>
+
+            <!-- ========================================================== -->
+            <!--            BLOCO 2: TUDO QUE FICA NA DIREITA               -->
+            <!-- ========================================================== -->
             <div class="header-controls">
                 <nav>
-                    <!-- ========================================================== -->
-                    <!--     VOLTANDO PARA UMA LISTA ÚNICA DE BOTÕES (HTML)         -->
-                    <!-- ========================================================== -->
                     <ul>
                         <li><a href="#dashboard" class="nav-tab active-tab" data-tab="dashboard">Dashboard</a></li>
                         <li><a href="#vendas" class="nav-tab" data-tab="vendas">Vendas</a></li>
@@ -1323,7 +1391,10 @@ body.dark-mode thead th {
                     <div class="table-legend" style="margin-bottom: 20px;">
                         <span class="legend-item"><span class="legend-color-box" style="background-color: #ffab00;"></span> Dia de Inauguração</span>
                     </div>
-
+                    <div class="filter-group" style="padding: 10px 0 20px 0;">
+                        <label for="detalhe-loja-filter">Loja:</label>
+                        <select id="detalhe-loja-filter"></select>
+                    </div>
                     <!-- Contêiner da Tabela Matriz -->
                     <div class="table-container" style="max-height: none; overflow-x: auto;">
                         <table id="tabela-detalhe-vendas">
@@ -1333,7 +1404,6 @@ body.dark-mode thead th {
                     </div>
                 </div>
 
-                        
                     
                     <!-- Contêiner da Tabela Matriz -->
                     <div class="table-container" style="max-height: 900px; overflow-x: auto;">
@@ -1361,11 +1431,19 @@ body.dark-mode thead th {
                         <input type="text" id="venda-tipo-loja-display" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="venda-modelo">Modelo Vendido</label>
+                        <label for="venda-modelo">Item</label>
                         <select id="venda-modelo" required></select>
                     </div>
 
                     <div class="form-group"><label for="venda-valor">Valor da Venda</label><input type="number" id="venda-valor" step="0.01" required></div>
+                                        <div class="form-group">
+                        <label for="venda-modelo-venda">Modelo de Venda</label>
+                        <select id="venda-modelo-venda" required>
+                            <option value="">Selecione o modelo</option>
+                            <option value="CASA+">CASA+</option>
+                            <option value="Store in Store">Store in Store</option>
+                        </select>
+                    </div>                    
                     <div class="form-group">
                         <label for="venda-forma-pagamento">Forma de Pagamento</label>
                         <select id="venda-forma-pagamento" required></select>
@@ -1407,7 +1485,20 @@ body.dark-mode thead th {
                 <div class="table-wrapper">
                     <div class="table-container">
                         <table id="tabela-vendas">
-                            <thead><tr><th>Data</th><th>Loja</th><th>Modelo</th><th>Valor</th><th>Qtd</th><th>Venda Total</th><th>Ações</th></tr></thead>
+                             <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Loja</th>
+                                    <th>Tipo Loja</th>
+                                    <th>Modelo</th>
+                                    <th>Valor Unit.</th>
+                                    <th>Modelo Venda</th>
+                                    <th>Forma Pag.</th>
+                                    <th>Qtd</th>
+                                    <th>Venda Total</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
                             <tbody id="tabela-vendas-body"></tbody>
                         </table>
                     </div>
@@ -1426,14 +1517,23 @@ body.dark-mode thead th {
                     <!-- BLOCO 1: CORREÇÃO NO HTML (Formulário de Lojas)                  -->
                     <!-- ================================================================== -->
 
-                    <div class="form-group">
-                        <label for="loja-tipo">Tipo da Loja</label>
-                        <select id="loja-tipo" required>
-                            <option value="">Selecione o tipo</option>
-                            <option value="Shopping">Shopping</option>
-                            <option value="Rua">Rua</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label for="loja-tipo">Tipo da Loja</label>
+                <select id="loja-tipo" required>
+                    <option value="">Selecione o tipo</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Rua">Rua</option>
+                    <!-- ========================================================== -->
+                    <!--                    INÍCIO DA ALTERAÇÃO                     -->
+                    <!-- ========================================================== -->
+                    <option value="Mercado">Mercado</option>
+                    <option value=".PERTO">.PERTO</option>
+                    <!-- ========================================================== -->
+                    <!--                     FIM DA ALTERAÇÃO                       -->
+                    <!-- ========================================================== -->
+                </select>
+            </div>
+
 
                     <div class="form-group"><label for="loja-data-inauguracao">Data de Inauguração</label><input type="date" id="loja-data-inauguracao" required></div>
                     <div class="form-group"><label for="loja-grc">GRC (Gerente)</label><input type="text" id="loja-grc" required></div>
@@ -1458,9 +1558,46 @@ body.dark-mode thead th {
 
             <!-- SEÇÃO 4: PRODUTOS -->
             <section id="produtos" class="tab-content">
-                <h2>Produtos Cadastrados</h2>
+                <!-- ========================================================== -->
+                <!--             INÍCIO DA ATUALIZAÇÃO DA SEÇÃO PRODUTOS         -->
+                <!-- ========================================================== -->
+
+                <!-- 1. CABEÇALHO COM TÍTULO E BOTÃO DE CADASTRO -->
+                                <div class="table-header-controls">
+                    <h2>Produtos Cadastrados</h2>
+                    <!-- ESCONDE O BOTÃO ADICIONANDO A CLASSE 'hidden' -->
+                    <button id="show-produto-form-btn" class="btn-cancel hidden" style="background-color: var(--success-color);">Cadastrar Novo Modelo</button>
+                </div>
+
+                <!-- 2. FORMULÁRIO DE CADASTRO (AGORA VISÍVEL) -->
+                <!-- REMOVE A CLASSE 'hidden' DO FORMULÁRIO -->
+                <form id="form-cadastro-produto" style="margin-bottom: 20px;">
+                    <h2 id="produto-form-title" style="margin-top: 0;">Cadastrar Novo Produto</h2>
+                    
+                    <div id="produto-error-msg" class="hidden"></div>
+                    
+                    <div class="form-group" style="grid-column: 1 / 3;">
+                        <label for="produto-modelo">Nome do Modelo</label>
+                        <input type="text" id="produto-modelo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="produto-valor">Valor Padrão</label>
+                        <input type="number" id="produto-valor" step="0.01" required min="0">
+                    </div>
+
+                    <div class="form-actions" style="grid-column: 4 / 5;">
+                        <!-- O botão de cancelar agora apenas limpa o formulário -->
+                         <button type="submit" id="produto-submit-btn">Cadastrar</button>
+                        <button type="button" id="cancel-produto-form-btn" class="btn-cancel">Limpar</button>
+                        
+                    </div>
+                </form>
+
+                <hr>
+                <!-- ========================================================== -->
+
+                <!-- 3. TABELA DE PRODUTOS (EXISTENTE) -->
                 <div class="table-wrapper">
-                    <!-- Adicione este DIV para habilitar o scroll -->
                     <div class="table-container">
                         <table id="tabela-produtos">
                             <thead>
@@ -1476,7 +1613,11 @@ body.dark-mode thead th {
                         </table>
                     </div>
                 </div>
+                <!-- ========================================================== -->
+                <!--                  FIM DA ATUALIZAÇÃO                      -->
+                <!-- ========================================================== -->
             </section>
+
 
         </main>
     </div>
@@ -1563,6 +1704,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elementos da Seção Produtos
     const produtosListaBody = document.getElementById('produtos-lista-body');
     const modal = document.getElementById('confirm-modal');
+
+    const showProdutoFormBtn = document.getElementById('show-produto-form-btn');
+    const produtoForm = document.getElementById('form-cadastro-produto');
+    const cancelProdutoFormBtn = document.getElementById('cancel-produto-form-btn');
+    const produtoErrorMsg = document.getElementById('produto-error-msg');
+
     const modalMessage = document.getElementById('modal-message');
     const modalConfirmBtn = document.getElementById('modal-confirm-btn');
     const modalCancelBtn = document.getElementById('modal-cancel-btn');
@@ -1576,6 +1723,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vendasFilterLoja = document.getElementById('vendas-filter-loja');
     const clearVendasFiltersBtn = document.getElementById('clear-vendas-filters-btn');
 
+    
     // --- BANCO DE DADOS (localStorage) e ESTADO DA SESSÃO ---
     let lojas = [];
     let vendas = [];
@@ -1594,6 +1742,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const detalheVendasBody = document.getElementById('detalhe-vendas-body');
     const detalheVendasTitulo = document.getElementById('detalhe-vendas-titulo');
     const lojasCheckboxesContainer = document.getElementById('lojas-checkboxes');
+    
     const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
 
     async function loadDataFromFirebase() {
@@ -1760,6 +1909,50 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+function renderTabelaVendas() {
+    const vendasFiltradas = getFilteredVendasTabela();
+    tabelaVendasBody.innerHTML = '';
+    const vendasOrdenadas = [...vendasFiltradas].sort((a, b) => new Date(b.data) - new Date(a.data));
+    
+    vendasOrdenadas.forEach(venda => {
+        // ==========================================================
+        //                    INÍCIO DA CORREÇÃO
+        // ==========================================================
+        
+        // 1. CORREÇÃO: A variável 'loja' é definida AQUI, dentro do loop.
+        // Para cada 'venda', procuramos a 'loja' correspondente no array de lojas.
+        const loja = lojas.find(l => l.id == venda.lojaId);
+        
+        // ==========================================================
+        //                     FIM DA CORREÇÃO
+        // ==========================================================
+
+        const totalVenda = venda.valor * venda.quantidade;
+
+        // Agora o código abaixo funcionará, pois a variável 'loja' existe e é a correta.
+        const row = `<tr>
+            <td>${new Date(venda.data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
+            <td>${loja ? loja.nome : 'N/A'}</td>
+            <td>${venda.tipoLoja || (loja ? loja.tipo : 'N/A')}</td>
+            <td>${venda.modelo}</td>
+            <td>${venda.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${venda.modeloVenda || 'N/A'}</td>
+            <td>${venda.formaPagamento || 'N/A'}</td>
+            <td>${venda.quantidade}</td>
+            <td>${totalVenda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td class="actions-cell">
+                <button class="btn-table-action btn-table-edit" data-id="${venda.id}">Editar</button>
+                <button class="btn-table-action btn-table-delete" data-id="${venda.id}">Excluir</button>
+            </td>
+        </tr>`;
+        
+        tabelaVendasBody.innerHTML += row;
+    });
+
+    document.querySelectorAll('#tabela-vendas .btn-table-edit').forEach(b => b.onclick = (e) => editVenda(e.target.dataset.id));
+    document.querySelectorAll('#tabela-vendas .btn-table-delete').forEach(b => b.onclick = (e) => deleteVenda(e.target.dataset.id));
+}
+
 
     // --- CONFIGURAÇÃO DOS FORMULÁRIOS ---
     function setupForms() {
@@ -1818,7 +2011,7 @@ document.addEventListener('DOMContentLoaded', () => {
         vendaDataInput.valueAsDate = new Date();
         vendaLojaSelect.onchange = () => {
             const loja = lojas.find(l => l.id == vendaLojaSelect.value);
-            vendaTipoLojaDisplay.value = loja ? `Bloco ${loja.tipo}` : '';
+            vendaTipoLojaDisplay.value = loja ? ` ${loja.tipo}` : '';
         };
         
         vendaModeloSelect.onchange = () => {
@@ -1861,6 +2054,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tipoLoja: lojaSelecionada ? lojaSelecionada.tipo : '',
                 modelo: vendaModeloSelect.value,
                 valor: parseFloat(vendaValorInput.value),
+                modeloVenda: document.getElementById('venda-modelo-venda').value,
                 formaPagamento: vendaFormaPagamentoSelect.value,
                 quantidade: parseInt(vendaQuantidadeInput.value)
             };
@@ -1876,10 +2070,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Após salvar, recarrega todos os dados para atualizar os dashboards e tabelas
                 await loadDataFromFirebase();
-                
-                resetVendaForm();
-                // Poderíamos adicionar uma mensagem de sucesso aqui se quiséssemos
-
+                renderTabelaVendas(); 
             } catch (error) {
                 console.error("Erro ao salvar venda no Firebase:", error);
                 alert("Ocorreu um erro ao salvar a venda. Verifique o console para mais detalhes.");
@@ -1890,13 +2081,16 @@ document.addEventListener('DOMContentLoaded', () => {
         exportVendasBtn.addEventListener('click', () => {
             const vendasParaExportar = getFilteredVendasTabela().map(venda => {
                 const loja = lojas.find(l => l.id == venda.lojaId);
-                return {
-                    Data: venda.data,
-                    Loja: loja ? loja.nome : 'N/A',
-                    Modelo: venda.modelo,
-                    Valor: venda.valor,
-                    Quantidade: venda.quantidade,
-                    Total: (venda.valor * venda.quantidade).toFixed(2)
+                 return {
+                    "Data": venda.data,
+                    "Loja": loja ? loja.nome : 'N/A',
+                    "Tipo Loja": venda.tipoLoja || (loja ? loja.tipo : 'N/A'),
+                    "Modelo": venda.modelo,
+                    "Valor Unitario": venda.valor.toFixed(2),
+                    "Modelo Venda": venda.modeloVenda || '',
+                    "Forma Pagamento": venda.formaPagamento || '',
+                    "Quantidade": venda.quantidade,
+                    "Venda Total": (venda.valor * venda.quantidade).toFixed(2)
                 };
             });
             if (vendasParaExportar.length > 0) {
@@ -1911,6 +2105,58 @@ document.addEventListener('DOMContentLoaded', () => {
             vendasFilterLoja.value = '';
             renderTabelaVendas();
         };
+
+            showProdutoFormBtn.addEventListener('click', () => {
+            produtoForm.classList.remove('hidden');
+            showProdutoFormBtn.classList.add('hidden');
+            produtoForm.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Evento para ESCONDER o formulário
+  cancelProdutoFormBtn.addEventListener('click', () => {
+            produtoForm.reset(); // Limpa os campos do formulário
+            produtoErrorMsg.classList.add('hidden'); // Esconde qualquer mensagem de erro
+            document.getElementById('produto-modelo').focus(); // Coloca o foco no primeiro campo
+        });
+
+        // Evento de SUBMISSÃO do formulário (lógica de salvar permanece a mesma)
+        produtoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nomeModelo = document.getElementById('produto-modelo').value.trim();
+            const valorModelo = parseFloat(document.getElementById('produto-valor').value);
+
+            const isDuplicate = produtos.some(p => p.modelo.toLowerCase() === nomeModelo.toLowerCase());
+            
+            if (isDuplicate) {
+                produtoErrorMsg.textContent = `O modelo "${nomeModelo}" já existe.`;
+                produtoErrorMsg.classList.remove('hidden');
+                return;
+            }
+
+            const novoProduto = {
+                modelo: nomeModelo,
+                valor: valorModelo,
+                ativo: true,
+                ultimaAlteracao: new Date().toISOString()
+            };
+
+            try {
+                await db.collection('produtos').add(novoProduto);
+
+                // Limpa o formulário para o próximo cadastro
+                cancelProdutoFormBtn.click(); // Simula um clique no botão de limpar
+                
+                await loadDataFromFirebase();
+                
+                alert('Produto cadastrado com sucesso!');
+
+            } catch (error) {
+                console.error("Erro ao cadastrar novo produto:", error);
+                produtoErrorMsg.textContent = 'Ocorreu um erro ao salvar. Tente novamente.';
+                produtoErrorMsg.classList.remove('hidden');
+            }
+        });
     }
 
     // --- FUNÇÕES DE RESET DE FORMULÁRIO ---
@@ -1979,12 +2225,39 @@ async function deleteLoja(id) {
         vendaValorInput.value = venda.valor;
         vendaFormaPagamentoSelect.value = venda.formaPagamento;
         vendaQuantidadeInput.value = venda.quantidade;
-        vendaValorInput.dispatchEvent(new Event('input'));
+        vendaValorInput.value = venda.valor;
+        document.getElementById('venda-modelo-venda').value = venda.modeloVenda || ''; // <<<<<<< NOVA LINHA
+        vendaFormaPagamentoSelect.value = venda.formaPagamento;
         vendaFormTitle.textContent = 'Editando Venda';
         vendaSubmitBtn.textContent = 'Salvar Alteração';
         cancelEditVendaBtn.classList.remove('hidden');
         formLancamento.scrollIntoView({ behavior: 'smooth' });
     }
+
+function populateLojasFilter() {
+    // 1. Pega a referência ao novo elemento <select>.
+    const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
+
+    // Se o elemento não for encontrado, interrompe para evitar erros.
+    if (!detalheLojaFilter) return;
+
+    // 2. Limpa o select e adiciona a opção "Todas" como padrão.
+    detalheLojaFilter.innerHTML = '<option value="all">Todas</option>';
+    
+    // 3. Ordena as lojas em ordem alfabética.
+    const lojasOrdenadas = [...lojas].sort((a, b) => a.nome.localeCompare(b.nome));
+
+    // 4. Cria um <option> para cada loja.
+    lojasOrdenadas.forEach(loja => {
+        detalheLojaFilter.innerHTML += `<option value="${loja.id}">${loja.nome}</option>`;
+    });
+
+    // 5. Adiciona o "ouvinte" de eventos para atualizar a tabela quando a seleção mudar.
+    detalheLojaFilter.addEventListener('change', () => {
+        updateDetalheVendasTable(getFilteredVendas());
+    });
+}
+
 
 // ==================================================================
 // VERSÃO CORRIGIDA DA FUNÇÃO DE EXCLUIR VENDA (COM FIREBASE)
@@ -2010,6 +2283,27 @@ async function deleteVenda(id) {
         }
     }
 }
+// ==================================================================
+//           NOVA FUNÇÃO PARA EXCLUIR PRODUTO NO FIREBASE
+// ==================================================================
+async function deleteProduto(id) {
+    console.log(`Tentando excluir produto com ID: ${id}`);
+    try {
+        // 1. Envia o comando de exclusão para o Firebase
+        await db.collection('produtos').doc(id).delete();
+
+        // 2. Recarrega todos os dados para garantir que a interface seja atualizada
+        // Isso removerá o produto da tabela e dos seletores de venda.
+        await loadDataFromFirebase();
+
+        console.log(`Produto com ID ${id} excluído com sucesso.`);
+        alert('Produto excluído com sucesso!');
+
+    } catch (error) {
+        console.error("Erro ao excluir produto no Firebase:", error);
+        alert("Ocorreu um erro ao tentar excluir o produto. Verifique o console.");
+    }
+}
 
 
     // --- FUNÇÕES DE RENDERIZAÇÃO DE TABELA ---
@@ -2023,36 +2317,58 @@ async function deleteVenda(id) {
         });
     }
 
-    function renderTabelaVendas() {
-        const vendasFiltradas = getFilteredVendasTabela();
-        tabelaVendasBody.innerHTML = '';
-        const vendasOrdenadas = [...vendasFiltradas].sort((a, b) => new Date(b.data) - new Date(a.data));
+   function renderTabelaVendas() {
+    // Pega os filtros da tabela de vendas (se houver)
+    const vendasFiltradas = getFilteredVendasTabela();
+    
+    // Limpa o corpo da tabela
+    const tabelaVendasBody = document.getElementById('tabela-vendas-body');
+    tabelaVendasBody.innerHTML = '';
+
+    // Ordena as vendas da mais recente para a mais antiga
+    const vendasOrdenadas = [...vendasFiltradas].sort((a, b) => new Date(b.data) - new Date(a.data));
+    
+    // Itera sobre cada venda para criar a linha da tabela
+    vendasOrdenadas.forEach(venda => {
+        // Busca a loja correspondente
+        const loja = lojas.find(l => l.id == venda.lojaId);
+
+        // ==========================================================
+        //                    INÍCIO DA CORREÇÃO
+        // ==========================================================
         
-        vendasOrdenadas.forEach(venda => {
-            const loja = lojas.find(l => l.id == venda.lojaId);
-            const totalVenda = venda.valor * venda.quantidade;
-            const row = `<tr>
-                <td>${new Date(venda.data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
-                <td>${loja ? loja.nome : 'N/A'}</td>
-                <td>${venda.modelo}</td>
-                <td>${venda.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                <td>${venda.quantidade}</td>
-                <td>${totalVenda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                <td class="actions-cell">
-                    <button class="btn-table-action btn-table-edit" data-id="${venda.id}">Editar</button>
-                    <button class="btn-table-action btn-table-delete" data-id="${venda.id}">Excluir</button>
-                </td>
-            </tr>`;
-            tabelaVendasBody.innerHTML += row;
-        });
+        // 1. Validação de segurança para os valores numéricos
+        const valorUnitario = typeof venda.valor === 'number' ? venda.valor : 0;
+        const quantidade = typeof venda.quantidade === 'number' ? venda.quantidade : 0;
+        const totalVenda = valorUnitario * quantidade;
 
-        document.querySelectorAll('#tabela-vendas .btn-table-edit').forEach(b => b.onclick = (e) => editVenda(e.target.dataset.id));
-        document.querySelectorAll('#tabela-vendas .btn-table-delete').forEach(b => b.onclick = (e) => deleteVenda(e.target.dataset.id));
-    }
+        // ==========================================================
+        //                     FIM DA CORREÇÃO
+        // ==========================================================
 
-    /* ================================================================== */
-    /* BLOCO 2: CORREÇÃO NO JAVASCRIPT (Tabela de Lojas)                */
-    /* ================================================================== */
+        const row = `<tr>
+            <td>${new Date(venda.data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
+            <td>${loja ? loja.nome : 'N/A'}</td>
+            <td>${venda.tipoLoja || (loja ? loja.tipo : 'N/A')}</td>
+            <td>${venda.modelo || 'N/A'}</td>
+            <td>${valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${venda.modeloVenda || 'N/A'}</td>
+            <td>${venda.formaPagamento || 'N/A'}</td>
+            <td>${quantidade}</td>
+            <td>${totalVenda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td class="actions-cell">
+                <button class="btn-table-action btn-table-edit" data-id="${venda.id}">Editar</button>
+                <button class="btn-table-action btn-table-delete" data-id="${venda.id}">Excluir</button>
+            </td>
+        </tr>`;
+        
+        tabelaVendasBody.innerHTML += row;
+    });
+
+    // Adiciona os eventos de clique aos botões
+    document.querySelectorAll('#tabela-vendas .btn-table-edit').forEach(b => b.onclick = (e) => editVenda(e.target.dataset.id));
+    document.querySelectorAll('#tabela-vendas .btn-table-delete').forEach(b => b.onclick = (e) => deleteVenda(e.target.dataset.id));
+}
 
     function renderTabelaLojas() {
         // A lógica do subtítulo também precisa ser corrigida para contar "Shopping" e "Rua"
@@ -2089,11 +2405,21 @@ async function deleteVenda(id) {
     }
 
     function populateProdutosSelect() {
+        // ==========================================================
+        //               A LÓGICA CORRETA ESTÁ AQUI
+        // ==========================================================
+        
+        // 1. Filtra o array 'produtos', pegando APENAS os que têm 'p.ativo === true'.
         const produtosAtivos = produtos.filter(p => p.ativo);
+        
+        // 2. Limpa o select de modelos.
         vendaModeloSelect.innerHTML = '<option value="">Selecione o modelo</option>';
+
+        // 3. Popula o select usando APENAS a lista de produtos ativos.
         produtosAtivos.forEach(produto => {
             vendaModeloSelect.innerHTML += `<option value="${produto.modelo}">${produto.modelo}</option>`;
         });
+        // ==========================================================
     }
 
     function populateVendasFilters() {
@@ -2142,6 +2468,14 @@ function renderProdutosLista() {
             </td>
             <td>
                 <button class="edit-valor-btn" data-id="${produto.id}" title="Editar valor">✏️</button>
+                
+                <!-- NOVO BOTÃO DE EXCLUSÃO -->
+                <button class="delete-produto-btn" data-id="${produto.id}" title="Excluir produto" style="color: var(--danger-color); font-size: 1.5rem; margin-left: 15px;">
+                    &times;
+                </button>
+                <!-- ========================================================== -->
+                <!--                     FIM DA ALTERAÇÃO                       -->
+                <!-- ========================================================== -->
             </td>
             <td>${dataFormatada}</td>
             <td>
@@ -2249,6 +2583,23 @@ function renderProdutosLista() {
                         console.error("Erro ao atualizar status do produto:", error);
                         alert("Não foi possível atualizar o status do produto.");
                     }
+                }
+            }
+
+            if (target.closest('.delete-produto-btn')) {
+                const deleteBtn = target.closest('.delete-produto-btn');
+                const id = deleteBtn.dataset.id;
+                const produto = produtos.find(p => p.id == id);
+
+                if (produto) {
+                    // 1. Abre o modal de confirmação
+                    modalMessage.textContent = `Tem certeza que deseja excluir o modelo "${produto.modelo}"? Esta ação não pode ser desfeita.`;
+                    modal.classList.remove('hidden');
+
+                    // 2. Define o que acontece quando o usuário clica em "Confirmar"
+                    confirmCallback = () => {
+                        deleteProduto(id); // Chama a função que realmente deleta
+                    };
                 }
             }
         });
@@ -2374,8 +2725,8 @@ function updateRankingModeloChart(vendasFiltradas) {
     const sorted = Object.entries(vendasPorModelo).sort(([, a], [, b]) => b - a).slice(0, 10);
 
     const gradient = ctx.createLinearGradient(0,0, 0, ctx.canvas.height); // Gradiente horizontal
-    gradient.addColorStop(0, '#191013'); // Cor inicial (esquerda, mais clara)
-    gradient.addColorStop(1, '#15191d'); // Cor final (direita, mais escura)
+    gradient.addColorStop(0, '#1a0b2a'); // Cor inicial (esquerda, mais clara)
+    gradient.addColorStop(1, '#1a0b2a'); // Cor final (direita, mais escura)
 
     createChart(ctx, 'bar', {
         labels: sorted.map(([nome]) => nome),
@@ -2408,8 +2759,8 @@ function updateRankingLojasChart(vendasFiltradas) {
     const sortedLojas = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
 
     const gradient = ctx.createLinearGradient(0,0, 0, ctx.canvas.height); // Gradiente horizontal
-    gradient.addColorStop(1, '#f7a21b'); // Cor inicial (esquerda, mais clara)
-    gradient.addColorStop(0, '#faba32'); // Cor final (direita, mais escura)
+    gradient.addColorStop(1, '#f5d393'); // Cor inicial (esquerda, mais clara)
+    gradient.addColorStop(0, '#f5d393'); // Cor final (direita, mais escura)
 
     createChart(ctx, 'bar', {
         labels: sortedLojas.map(([nome]) => nome),
@@ -2424,7 +2775,7 @@ function updateRankingLojasChart(vendasFiltradas) {
         plugins: { 
             legend: { display: false },
             datalabels: {
-                color: '#fff',
+                color: '#15191',
                 anchor: 'center',
                 align: 'center'
             }
@@ -2455,8 +2806,8 @@ function updateParticipacaoChart(vendasFiltradas) {
     
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
     const isDarkMode = document.body.classList.contains('dark-mode');
-        gradient.addColorStop(1, '#4b538b'); // Cor inicial (esquerda, mais clara)
-        gradient.addColorStop(0, '#4b538b'); // Cor final (direita, mais escura)
+        gradient.addColorStop(1, '#f39772'); // Cor inicial (esquerda, mais clara)
+        gradient.addColorStop(0, '#f39772'); // Cor final (direita, mais escura)
     createChart(ctx, 'bar', {
         labels: sorted.map(([nome]) => nome),
         datasets: [{
@@ -2472,7 +2823,7 @@ function updateParticipacaoChart(vendasFiltradas) {
             legend: { display: false },
             // 4. ALTERAÇÃO: Rótulo de dados agora formata como percentual.
             datalabels: {
-                color: '#fff',
+                color: '#15191',
                 anchor: 'center',
                 align: 'center',
                 formatter: (value) => value > 0 ? `${value.toFixed(1)}%` : '' // Ex: 25.5%
@@ -2507,24 +2858,27 @@ function updateParticipacaoChart(vendasFiltradas) {
 
 
 function updateDetalheVendasTable(vendasFiltradas) {
-
     
     const meses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
     const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     const selectedMonth = parseInt(filterMonth.value);
     const selectedYear = parseInt(filterYear.value);
-
     const mesNome = selectedMonth !== 'all' ? meses[selectedMonth] : 'PERÍODO';
     detalheVendasTitulo.textContent = `Detalhamento de Vendas - ${mesNome}`;
 
+    const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
+    // Adiciona uma verificação de segurança para o caso do elemento não existir ainda
+    if (!detalheLojaFilter) return; 
+    
+    const lojaFiltradaId = detalheLojaFilter.value;
+    let lojasAtivas;
 
-
-   const lojasAtivas = [...lojas].sort((a,b) => a.nome.localeCompare(b.nome));
-
-
-    // --- INÍCIO DA ALTERAÇÃO: CÁLCULO E RENDERIZAÇÃO DO TOTALIZADOR ---
-
-    // 1. CALCULAR TOTAIS POR LOJA E O TOTAL GERAL
+    if (lojaFiltradaId === 'all') {
+        lojasAtivas = [...lojas].sort((a, b) => a.nome.localeCompare(b.nome));
+    } else {
+        lojasAtivas = lojas.filter(loja => loja.id === lojaFiltradaId);
+    }
+    
     const totaisPorLoja = {};
     let totalGeralPcs = 0;
     let totalGeralValor = 0;
@@ -2538,8 +2892,11 @@ function updateDetalheVendasTable(vendasFiltradas) {
         totalGeralValor += totalValor;
     });
 
-    // 2. AJUSTAR A CONSTRUÇÃO DO CABEÇALHO PARA INCLUIR A NOVA LINHA
-    // A primeira célula do cabeçalho agora ocupa 4 linhas (rowspan="4")
+    // ==========================================================
+    //            INÍCIO DO CÓDIGO RESTAURADO
+    // ==========================================================
+
+    // --- CONSTRUÇÃO DO CABEÇALHO DA TABELA ---
     let headerHTML = '<tr><th rowspan="4" class="row-header-dia">DATA</th>';
     
     if (lojasAtivas.length > 0) {
@@ -2552,17 +2909,14 @@ function updateDetalheVendasTable(vendasFiltradas) {
         });
         headerHTML += '<th colspan="2"></th></tr>';
         
-        // **NOVA LINHA DE TOTALIZADORES**
         headerHTML += '<tr>';
         lojasAtivas.forEach(loja => {
             const total = totaisPorLoja[loja.id];
             headerHTML += `<th class="sub-header">${total.pcs}</th><th class="sub-header">${total.valor.toLocaleString('pt-BR')}</th>`;
         });
-        // Adiciona o total geral
         headerHTML += `<th class="sub-header">${totalGeralPcs}</th><th class="sub-header">${totalGeralValor.toLocaleString('pt-BR')}</th>`;
         headerHTML += '</tr>';
         
-        // Linha de "Pçs" e "$"
         headerHTML += '<tr>';
         lojasAtivas.forEach(() => { headerHTML += '<th class="sub-header">Pçs</th><th class="sub-header">$</th>'; });
         headerHTML += '<th class="sub-header">Pçs</th><th class="sub-header">$</th>';
@@ -2570,9 +2924,7 @@ function updateDetalheVendasTable(vendasFiltradas) {
     headerHTML += '</tr>';
     detalheVendasHead.innerHTML = headerHTML;
     
-    // --- FIM DA ALTERAÇÃO ---
-
-    // O corpo da tabela permanece o mesmo
+    // --- CONSTRUÇÃO DO CORPO DA TABELA ---
     const diasDoMes = (selectedMonth === 'all' || selectedYear === 'all') 
         ? [...new Set(vendasFiltradas.map(v => v.data))].sort()
         : Array.from({ length: new Date(selectedYear, selectedMonth + 1, 0).getDate() }, (_, i) => `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`);
@@ -2604,27 +2956,27 @@ function updateDetalheVendasTable(vendasFiltradas) {
         });
     }
     detalheVendasBody.innerHTML = bodyHTML;
+
+    // ==========================================================
+    //                 FIM DO CÓDIGO RESTAURADO
+    // ==========================================================
 }
 
-
-/* ================================================================== */
-/* BLOCO ÚNICO: CORREÇÃO NO JAVASCRIPT (Ordem de Definição de ctx)    */
-/* ================================================================== */
-
 function updateVendaTipoLojaChart(vendasFiltradas) {
-    // 1. CORREÇÃO: A linha que define 'ctx' foi movida para o início.
     const ctx = document.getElementById('venda-tipo-loja-chart').getContext('2d');
     const totalUnidades = vendasFiltradas.reduce((sum, v) => sum + v.quantidade, 0);
-    if (totalUnidades === 0) { if(charts[ctx.canvas.id]) charts[ctx.canvas.id].destroy(); return; }
+    if (totalUnidades === 0) {
+        if (charts[ctx.canvas.id]) charts[ctx.canvas.id].destroy();
+        return;
+    }
 
     const vendasPorTipo = vendasFiltradas.reduce((acc, v) => {
         const loja = lojas.find(l => l.id == v.lojaId);
-        if (loja) acc[`Bloco ${loja.tipo}`] = (acc[`Bloco ${loja.tipo}`] || 0) + v.quantidade;
+        if (loja) acc[loja.tipo] = (acc[loja.tipo] || 0) + v.quantidade;
         return acc;
     }, {});
     const sorted = Object.entries(vendasPorTipo).sort(([, a], [, b]) => b - a);
     
-    // 2. CORREÇÃO: Agora 'ctx' já existe quando estas linhas são executadas.
     const chartArea = ctx.canvas.getBoundingClientRect();
     const centerX = chartArea.width / 2;
     const centerY = chartArea.height / 2;
@@ -2637,41 +2989,42 @@ function updateVendaTipoLojaChart(vendasFiltradas) {
         return gradient;
     };
 
-    const gradientBlue = createRadialGradient('#4b538b', '#4b538b');
-    const gradientGreen = createRadialGradient('#a5c8ca', '#a5c8ca');
-    const gradientYellow = createRadialGradient('#ffab00', '#FFC400');
+    // ==========================================================
+    //                    INÍCIO DA ALTERAÇÃO
+    // ==========================================================
 
-    createChart(ctx, 'pie', {
+    // 1. Definição das cores existentes
+    const gradientBlue = createRadialGradient('#f5d393', '#f5d393');
+    const gradientLightBlue = createRadialGradient('#f39772', '#f39772'); // Renomeado para clareza
+    const gradientYellow = createRadialGradient('#eb6765', '#eb6765');
+    const gradientGreen = createRadialGradient('#261329', '#261329');
+
+    createChart(ctx, 'doughnut', {
         labels: sorted.map(([tipo]) => tipo),
         datasets: [{
             data: sorted.map(([, qtd]) => qtd),
-            backgroundColor: [gradientBlue, gradientGreen, gradientYellow],
+            
+            // 3. ATUALIZA O ARRAY DE CORES para incluir a nova cor
+            backgroundColor: [
+                gradientBlue, 
+                gradientLightBlue, 
+                gradientYellow, 
+                gradientGreen // Nova cor adicionada
+            ],
+            
             borderColor: document.body.classList.contains('dark-mode') ? '#111111' : '#ffffff',
             borderWidth: 0
         }]
     }, {
-        plugins: {
-            legend: { position: 'bottom' },
-                        datalabels: {
-                color: '#fff',
-                anchor: 'center', // Ancorar o rótulo no centro da fatia
-                align: 'center',  // Alinhar o texto no centro da âncora
-                formatter: (value) => {
-                    const percent = (value / totalUnidades * 100).toFixed(1);
-                    return `${percent}%`; // Mostra apenas o percentual
-                },
-                font: { 
-                    weight: 'bold',
-                    size: 11 // Aumenta um pouco o tamanho da fonte para melhor leitura
-                }
-            }
-            // ==================================================================
-            // FIM DA ALTERAÇÃO
-            // ==================================================================
-        },
-        cutout: '50%' 
+        // ... (resto das suas opções de gráfico) ...
+     cutout: '30%'
     });
+    
+    // ==========================================================
+    //                     FIM DA ALTERAÇÃO
+    // ==========================================================
 }
+
 
 
 function updateVendaFormaPagamentoChart(vendasFiltradas) {
@@ -2684,8 +3037,8 @@ function updateVendaFormaPagamentoChart(vendasFiltradas) {
     
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
     const isDarkMode = document.body.classList.contains('dark-mode');
-        gradient.addColorStop(1, '#f7a21b'); // Cor inicial (esquerda, mais clara)
-        gradient.addColorStop(0, '#f7a21b'); // Cor final (direita, mais escura)
+        gradient.addColorStop(1, '#f5d393'); // Cor inicial (esquerda, mais clara)
+        gradient.addColorStop(0, '#f5d393'); // Cor final (direita, mais escura)
 
     createChart(ctx, 'bar', {
         labels: sorted.map(([nome]) => nome),
@@ -2700,7 +3053,7 @@ function updateVendaFormaPagamentoChart(vendasFiltradas) {
         plugins: { 
             legend: { display: false },
             datalabels: {
-                color: '#fff',
+                color: '#15191',
                 anchor: 'center',
                 align: 'center'
             }
@@ -2718,8 +3071,8 @@ function updateRankingGRCChart(vendasFiltradas) {
     const sorted = Object.entries(vendasPorGRC).sort(([, a], [, b]) => b - a);
 
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-        gradient.addColorStop(1, '#15191d'); // Cor inicial (esquerda, mais clara)
-        gradient.addColorStop(0, '#15191d'); // Cor final (direita, mais escura)
+        gradient.addColorStop(1, '#1a0b2a'); // Cor inicial (esquerda, mais clara)
+        gradient.addColorStop(0, '#1a0b2a'); // Cor final (direita, mais escura)
 
     createChart(ctx, 'bar', {
         labels: sorted.map(([grc]) => grc),
@@ -2755,8 +3108,16 @@ function updateVendaDiaChart(vendasFiltradas) {
     // O gradiente não é mais necessário para a cor de fundo principal
     // const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
     // ...
+   const maxDataValue = Math.max(...sorted.map(([, val]) => val));
 
     const options = {
+        maintainAspectRatio: false,
+        // 2. Adiciona um preenchimento no topo da área do gráfico
+        layout: {
+            padding: {
+                top: 30 // Espaço de 30px no topo para o rótulo "respirar"
+            }
+        },
         plugins: {
             legend: { 
                 display: false 
@@ -2777,38 +3138,57 @@ function updateVendaDiaChart(vendasFiltradas) {
                 padding: 4
             }
         },
-        scales: {
-            y: { grid: { display: true, drawBorder: false }, ticks: { display: true } },
+      scales: {
+            y: { 
+                grid: { display: true, drawBorder: false }, 
+                ticks: { display: true },
+                // 3. Sugere um valor máximo 10% maior que o pico real
+                suggestedMax: maxDataValue * 1.1 
+            },
             x: { 
                 grid: { display: false },
                 ticks: {
-                    // SE FOR MOBILE, GIRA OS RÓTULOS para não sobrepor
-                    maxRotation: isMobile ? 45 : 0, // Gira 45 graus no mobile
-                    minRotation: isMobile ? 45 : 0,
-                    autoSkip: true, // Permite que o Chart.js pule alguns rótulos se necessário
-                    maxTicksLimit: isMobile ? 8 : 20 // Limita o número de datas mostradas no mobile
+                    // 1. Deixa os rótulos retos em todas as telas
+                    maxRotation: 0,
+                    minRotation: 0,
+
+                    // 2. Aumenta a quantidade de rótulos visíveis
+                    maxTicksLimit: isMobile ? 7 : 31, // Mostra mais dias no mobile e até 31 no desktop
+                    
+                    // 3. Diminui o tamanho da fonte
+                    font: {
+                        size: 10 
+                    },
+                    autoSkip: true, // Mantém o skip automático para evitar sobreposição se necessário
+                    padding: 5 // Adiciona um pequeno espaço entre o eixo e os rótulos
                 }
             }
         }
     };
 
     const data = {
-        labels: sorted.map(([data]) => new Date(data + 'T00:00:00').toLocaleDateString('pt-BR')),
+         labels: sorted.map(([data]) => new Date(data + 'T00:00:00').getDate()),
         datasets: [{
             label: 'Venda Total',
             data: sorted.map(([, val]) => val),
             
             // --- ALTERAÇÃO: Cores padronizadas para o azul ---
-            borderColor: '#4b538b',             // Cor da LINHA
-            backgroundColor: 'rgba(75, 83, 139, 0.5)', // Cor da ÁREA com 50% de transparência
-            pointBackgroundColor: '#4b538b',   // Cor do MARCADOR (ponto)
+borderColor: '#1a0b2a',
+            pointBackgroundColor: '#1a0b2a',
+            pointHoverBorderColor: '#1a0b2a',
+            
+            // Cor da área sob a linha (convertemos #1a0b2a para RGBA com 50% de opacidade)
+            backgroundColor: 'rgba(26, 11, 42, 0.5)', 
+            
+            // ==========================================================
+            //                     FIM DA ALTERAÇÃO
+            // ==========================================================
 
             pointBorderColor: '#fff',
             pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: '#4b538b',
             pointRadius: 4,
             pointHoverRadius: 6,
-            fill: true, // 'fill: true' usa o backgroundColor para preencher a área
+            fill: true,
             tension: 0.4
         }]
     };
@@ -2818,6 +3198,7 @@ function updateVendaDiaChart(vendasFiltradas) {
 
 
 function updateVendaSemanaChart(vendasFiltradas) {
+
     const ctx = document.getElementById('venda-semana-chart').getContext('2d');
     
     const getWeekOfMonth = (date) => {
@@ -2848,23 +3229,23 @@ function updateVendaSemanaChart(vendasFiltradas) {
     });
 
     const isDarkMode = document.body.classList.contains('dark-mode');
-
+    const maxDataValue = Math.max(...sorted.map(item => item.value));
     // O gradiente não é mais necessário
     // const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
     // ...
 
     createChart(ctx, 'line', {
-        labels: sorted.map(item => item.label),
+        labels: sorted.map(item => item.label.split(' ')[0] + ' Sem'),
         datasets: [{
             label: 'Venda Total',
             data: sorted.map(item => item.value),
 
             // --- ALTERAÇÃO: Cores padronizadas para o azul ---
-            borderColor: '#4b538b',             // Cor da LINHA
-            backgroundColor: 'rgba(75, 83, 139, 0.5)', // Cor da ÁREA com 50% de transparência
-            pointBackgroundColor: '#4b538b',    // Cor do MARCADOR (ponto)
-
-            fill: true, // 'fill: true' usa o backgroundColor para preencher a área
+            borderColor: '#1a0b2a',             // Cor da LINHA
+            pointBackgroundColor: '#1a0b2a',
+            pointHoverBorderColor: '#1a0b2a',
+            backgroundColor: 'rgba(26, 11, 42, 0.5)',
+            fill: true,
             tension: 0.4,
             pointBorderColor: '#fff',
             pointHoverBackgroundColor: '#fff',
@@ -2873,6 +3254,12 @@ function updateVendaSemanaChart(vendasFiltradas) {
             pointHoverRadius: 6
         }]
     }, {
+     maintainAspectRatio: false,
+             layout: {
+            padding: {
+                top: 30
+            }
+        },
         plugins: {
             legend: { display: false },
             datalabels: {
@@ -2891,35 +3278,67 @@ function updateVendaSemanaChart(vendasFiltradas) {
                 padding: 4
             }
         },
-        scales: {
+       scales: {
             y: { grid: { display: true, drawBorder: false }, ticks: { display: true } },
-            x: { grid: { display: false } }
+            x: { 
+                grid: { display: false },
+                ticks: {
+                    // 1. Deixa os rótulos retos
+                    maxRotation: 0,
+                    minRotation: 0,
+
+                    // 2. Aumenta a quantidade de rótulos (geralmente 4 ou 5 semanas no máximo)
+                    maxTicksLimit: 5,
+                    
+                    // 3. Diminui o tamanho da fonte
+                    font: {
+                        size: 10
+                    },
+                    autoSkip: true,
+                    padding: 5
+                }
+            }
         }
     });
 }
 
 function updateVendaMensalChart() {
     const ctx = document.getElementById('venda-mensal-chart').getContext('2d');
-    
     const vendasPorMes = vendas.reduce((acc, v) => {
         const vendaDate = new Date(v.data + 'T00:00:00');
         const chave = `${vendaDate.getFullYear()}-${String(vendaDate.getMonth()).padStart(2, '0')}`;
         acc[chave] = (acc[chave] || 0) + (v.valor * v.quantidade);
         return acc;
     }, {});
-
     const sorted = Object.entries(vendasPorMes).sort(([a], [b]) => a.localeCompare(b));
-
     const labels = sorted.map(([chave]) => {
         const [ano, mes] = chave.split('-');
         return new Date(ano, mes, 1).toLocaleString('pt-BR', { month: 'short', year: '2-digit' }).replace('. de', '');
     });
     const data = sorted.map(([, valor]) => valor);
-
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-    gradient.addColorStop(1, '#f7a21b ');
-    gradient.addColorStop(0, '#f7a21b ');
-
+    gradient.addColorStop(1, '#f5d393');
+    gradient.addColorStop(0, '#f5d393');
+    const isMobile = window.innerWidth <= 768;
+    const datalabelsConfig = isMobile 
+        ? {
+            anchor: 'center',
+            align: 'center',
+            rotation: -90,
+            offset: 0,
+            color: '#15191',
+            font: { weight: 'bold', size: 11 },
+            // AQUI ESTÁ A CORREÇÃO:
+            formatter: (value) => value > 0 ? value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''
+          }
+        : { 
+            color: document.body.classList.contains('dark-mode') ? '#15191' : '#15191',
+            anchor: 'center',
+            align: 'center',
+            offset: 4,
+            font: { weight: 'bold', size: 11 },
+            formatter: (value) => value > 0 ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''
+          };
     createChart(ctx, 'bar', {
         labels: labels,
         datasets: [{
@@ -2931,31 +3350,13 @@ function updateVendaMensalChart() {
     }, {
         plugins: {
             legend: { display: false },
-            // --- ALTERAÇÃO PARA DEIXAR OS RÓTULOS APARENTES ---
-            datalabels: {
-                // Define a cor do texto dinamicamente (preto no modo claro, branco no modo escuro)
-                color: document.body.classList.contains('dark-mode') ? '#e8f5e9' : '#e8f5e9',
-                anchor: 'center',     // "Âncora" do rótulo no final da barra (no topo)
-                align: 'center',      // Alinha o rótulo ACIMA da âncora (para fora da barra)
-                offset: 4,         // Adiciona um pequeno espaço de 4 pixels acima da barra
-                font: {
-                    weight: 'bold',
-                    size: 11
-                },
-                // Formata o valor para '12.3k' (milhares)
-                formatter: (value) => {
-                    if (value > 0) {
-                        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                    }
-                    return '';
-                }
-            }
+            datalabels: datalabelsConfig
         }
     });
 }
 
 
-  function updateVendaAnualChart() {
+function updateVendaAnualChart() {
     const ctx = document.getElementById('venda-anual-chart').getContext('2d');
 
     const vendasPorAno = vendas.reduce((acc, v) => {
@@ -2967,8 +3368,35 @@ function updateVendaMensalChart() {
     const sorted = Object.entries(vendasPorAno).sort(([a], [b]) => a.localeCompare(b));
 
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-    gradient.addColorStop(1, '#15191d');
-    gradient.addColorStop(0, '#15191d');
+    gradient.addColorStop(1, '#f39772');
+    gradient.addColorStop(0, '#f39772');
+
+    // ==========================================================
+    //           INÍCIO DA LÓGICA CONDICIONAL PARA RÓTULOS
+    // ==========================================================
+
+    // 1. Verifica se é mobile
+    const isMobile = window.innerWidth <= 768;
+
+    // 2. Define as configurações condicionalmente
+    const datalabelsConfig = isMobile? { // --- CONFIGURAÇÃO PARA MOBILE ---
+            anchor: 'center',
+            align: 'center',
+            rotation: -90,
+            offset: 8,
+            color: '#15191',
+            font: { weight: 'bold', size: 11 },
+            // AQUI ESTÁ A CORREÇÃO:
+            formatter: (value) => value > 0 ? value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''
+          }
+        : { 
+            color: document.body.classList.contains('dark-mode') ? '#15191' : '#15191',
+            anchor: 'center',
+            align: 'center',
+            offset: 4,
+            font: { weight: 'bold', size: 11 },
+            formatter: (value) => value > 0 ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : ''
+          };
 
     createChart(ctx, 'bar', {
         labels: sorted.map(([ano]) => ano),
@@ -2981,41 +3409,26 @@ function updateVendaMensalChart() {
     }, {
         plugins: {
             legend: { display: false },
-            // --- ALTERAÇÃO PARA DEIXAR OS RÓTULOS APARENTES ---
-            datalabels: {
-                // Define a cor do texto dinamicamente
-                color: document.body.classList.contains('dark-mode') ? '#e8f5e9' : '#e8f5e9',
-                anchor: 'center',     // Âncora no topo da barra
-                align: 'center',      // Alinha para fora da barra
-                offset: 4,         // Espaçamento acima da barra
-                font: {
-                    weight: 'bold',
-                    size: 11
-                },
-                // Formata o valor para '12.3k' (milhares)
-                formatter: (value) => {
-                    if (value > 0) {
-                        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                    }
-                    return '';
-                }
-            }
+            // 3. Aplica a configuração
+            datalabels: datalabelsConfig
         }
     });
 }
 
-    // --- FUNÇÃO DE RENDERIZAÇÃO INICIAL ---
     function renderAll() {
         renderTabelaLojas();
         renderProdutosLista();
         populateLojasSelect();
         populateProdutosSelect();
         populateVendasFilters();
+
+                populateLojasFilter(); // Gera os checkboxes
+        lojasSelecionadasIds = lojas.map(l => l.id);
         renderTabelaVendas();
         updateDashboard();
     }
 
-    // --- PONTO DE ENTRADA DA APLICAÇÃO ---
+
     checkLogin();
 });
 
@@ -3025,5 +3438,3 @@ function updateVendaMensalChart() {
 
 </body>
 </html>
-
-
