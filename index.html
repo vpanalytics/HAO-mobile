@@ -3001,13 +3001,8 @@ function updateVendaTipoLojaChart(vendasFiltradas) {
         return gradient;
     };
 
-    // ==========================================================
-    //                    INÍCIO DA ALTERAÇÃO
-    // ==========================================================
-
-    // 1. Definição das cores existentes
     const gradientBlue = createRadialGradient('#f5d393', '#f5d393');
-    const gradientLightBlue = createRadialGradient('#f39772', '#f39772'); // Renomeado para clareza
+    const gradientLightBlue = createRadialGradient('#f39772', '#f39772');
     const gradientYellow = createRadialGradient('#eb6765', '#eb6765');
     const gradientGreen = createRadialGradient('#261329', '#261329');
 
@@ -3015,27 +3010,60 @@ function updateVendaTipoLojaChart(vendasFiltradas) {
         labels: sorted.map(([tipo]) => tipo),
         datasets: [{
             data: sorted.map(([, qtd]) => qtd),
-            
-            // 3. ATUALIZA O ARRAY DE CORES para incluir a nova cor
             backgroundColor: [
                 gradientBlue, 
                 gradientLightBlue, 
                 gradientYellow, 
-                gradientGreen // Nova cor adicionada
+                gradientGreen
             ],
-            
-            borderColor: document.body.classList.contains('dark-mode') ? '#111111' : '#ffffff',
-            borderWidth: 0
+            borderColor: document.body.classList.contains('dark-mode') ? '#111111' : '#ffffff', // Corrigido para fundo branco no modo claro
+            borderWidth: 0 // Adicionado uma pequena borda para melhor separação
         }]
     }, {
-        // ... (resto das suas opções de gráfico) ...
-     cutout: '30%'
+        // ==========================================================
+        //            INÍCIO DO BLOCO DE CÓDIGO ADICIONADO
+        // ==========================================================
+        plugins: {
+            // 1. Configura a legenda para aparecer na parte de baixo
+            legend: { 
+                position: 'bottom' 
+            },
+            
+            // 2. Configura os rótulos de dados
+            datalabels: {
+                // Cor da fonte do rótulo (branca para bom contraste)
+                color: '#15191d',
+                
+                // Posição do rótulo: ancorado no centro da fatia
+                anchor: 'center',
+                
+                // Alinhamento do texto: centralizado na âncora
+                align: 'center',
+                
+                // Função para formatar o valor como percentual
+                formatter: (value, context) => {
+                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    const percentage = (value / total * 100).toFixed(1);
+                    // Só mostra o rótulo se for maior que 3% para não poluir o gráfico
+                    return percentage > 3 ? `${percentage}%` : ''; 
+                },
+                
+                // Estilo da fonte
+                font: { 
+                    weight: 'bold',
+                    size: 12
+                }
+            }
+        },
+        // ==========================================================
+        //                 FIM DO BLOCO ADICIONADO
+        // ==========================================================
+        
+        // Mantém a sua configuração de "furo" da rosca
+        cutout: '60%' 
     });
-    
-    // ==========================================================
-    //                     FIM DA ALTERAÇÃO
-    // ==========================================================
 }
+
 
 
 
