@@ -14,9 +14,21 @@
         <!-- ... outros scripts como Chart.js ... -->
 
     <!-- NOVOS SCRIPTS DO FIREBASE -->
-    <!-- O App principal do Firebase (sempre necessário) -->
+    <!-- O App principal do Firebase (sempre necessário ) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
-    <!-- Carrega o serviço do Firestore (banco de dados ) -->
+    
+    <!-- ========================================================== -->
+    <!--            INÍCIO DA ALTERAÇÃO (ADICIONAR SCRIPT )          -->
+    <!-- ========================================================== -->
+    
+    <!-- Carrega o serviço de Autenticação -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+    
+    <!-- ========================================================== -->
+    <!--                       FIM DA ALTERAÇÃO                       -->
+    <!-- ========================================================== -->
+    
+    <!-- Carrega o serviço do Firestore (banco de dados  ) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
 
     <!-- Fonte do Google para um visual mais moderno -->
@@ -1698,7 +1710,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 // Pega uma referência ao serviço do banco de dados (Firestore)
 const db = firebase.firestore();
-
+const auth = firebase.auth();
 // --- FIM DA CONFIGURAÇÃO DO FIREBASE ---
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1850,35 +1862,76 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(currentTheme === 'light' ? 'dark' : 'light');
     });
 
-    // --- LÓGICA DE AUTENTICAÇÃO E SESSÃO ---
-    function checkLogin() {
-        applyTheme(localStorage.getItem('theme'));
-        if (sessionStorage.getItem('loggedIn') === 'true') {
+// ==========================================================
+//         INÍCIO DA ALTERAÇÃO (VERIFICAÇÃO DE SESSÃO)
+// ==========================================================
+function checkLogin() {
+    applyTheme(localStorage.getItem('theme'));
+
+    // onAuthStateChanged é um "ouvinte" que dispara sempre que o estado
+    // de login do usuário muda (login, logout, página recarregada).
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // O usuário ESTÁ logado.
+            console.log('Sessão ativa para:', user.email);
             showApp();
         } else {
+            // O usuário NÃO ESTÁ logado.
+            console.log('Nenhum usuário logado.');
             showLogin();
         }
-    }
+    });
+}
+// ==========================================================
+//                       FIM DA ALTERAÇÃO
+// ==========================================================
 
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
 
-        if (username === 'hao' && password === '123') {
-            sessionStorage.setItem('loggedIn', 'true');
-        
-        location.reload();
-        loadDataFromLocalStorage();
-        } else {
+// ==========================================================
+//            INÍCIO DA ALTERAÇÃO (FUNÇÃO DE LOGIN)
+// ==========================================================
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('username').value; // Agora é um e-mail
+    const password = document.getElementById('password').value;
+
+    // Usa a função do Firebase para fazer login
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Login bem-sucedido!
+            // Não precisamos mais do sessionStorage, o Firebase cuida disso.
+            console.log('Login bem-sucedido:', userCredential.user);
+            showApp(); // Mostra a tela principal da aplicação
+        })
+        .catch((error) => {
+            // Ocorreu um erro
+            console.error('Erro no login:', error);
+            loginError.textContent = "E-mail ou senha inválidos."; // Mensagem de erro genérica
             loginError.classList.remove('hidden');
-        }
-    });
+        });
+});
+// ==========================================================
+//                       FIM DA ALTERAÇÃO
+// ==========================================================
 
-    logoutButton.addEventListener('click', () => {
-        sessionStorage.removeItem('loggedIn');
-        showLogin();
+
+// ==========================================================
+//           INÍCIO DA ALTERAÇÃO (FUNÇÃO DE LOGOUT)
+// ==========================================================
+logoutButton.addEventListener('click', () => {
+    auth.signOut().then(() => {
+        // Logout bem-sucedido.
+        console.log('Usuário deslogado.');
+        // Não precisa chamar showLogin(), o onAuthStateChanged fará isso.
+        location.reload(); // A forma mais simples de resetar o estado da aplicação
+    }).catch((error) => {
+        console.error('Erro ao fazer logout:', error);
     });
+});
+// ==========================================================
+//                       FIM DA ALTERAÇÃO
+// ==========================================================
+
 
     function showLogin() {
         appScreen.classList.add('hidden');
