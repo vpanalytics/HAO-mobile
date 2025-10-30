@@ -1155,7 +1155,7 @@ body.dark-mode .login-page-container {
     /* Força o canvas a ter uma largura mínima para que o scroll funcione */
     #venda-dia-chart,
     #venda-semana-chart {
-        min-width: 600px;
+        min-width: 200px;
     }
 
     /* 3. ALTURA CORRETA PARA GRÁFICOS MENSAL/ANUAL */
@@ -3142,90 +3142,88 @@ function updateVendaDiaChart(vendasFiltradas) {
         return acc;
     }, {});
     const sorted = Object.entries(vendasPorDia).sort(([a], [b]) => new Date(a) - new Date(b));
+    
+    // As variáveis isMobile e isDarkMode não são mais necessárias para o formatter aqui.
     const isMobile = window.innerWidth <= 768;
     const isDarkMode = document.body.classList.contains('dark-mode');
+    
+    const maxDataValue = Math.max(...sorted.map(([, val]) => val));
 
-    // O gradiente não é mais necessário para a cor de fundo principal
-    // const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-    // ...
-   const maxDataValue = Math.max(...sorted.map(([, val]) => val));
+    // ==========================================================
+    //            INÍCIO DA LÓGICA DE FORMATAÇÃO
+    // ==========================================================
+
+    // 1. Função de formatação com o padrão "Mil" e "Mi"
+    const formatarValorAbreviado = (valor) => {
+        if (valor >= 1000000) {
+            // Formata para Milhões (Mi) com uma casa decimal e vírgula
+            return (valor / 1000000).toFixed(1).replace('.', ',') + ' Mi';
+        }
+        if (valor >= 1000) {
+            // Formata para Milhares (Mil) com uma casa decimal e vírgula
+            return (valor / 1000).toFixed(1).replace('.', ',') + ' Mil';
+        }
+        // Abaixo de 1000, mostra o número inteiro
+        return valor.toFixed(0);
+    };
+
+    // 2. A configuração dos rótulos agora é ÚNICA, usando sempre a abreviação.
+    const datalabelsConfig = {
+        display: true,
+        anchor: 'end',
+        align: 'top',
+        offset: 8,
+        color: isDarkMode ? '#e0e0e0' : '#15191d',
+        font: { size: 10, weight: 'bold' },
+        backgroundColor: isDarkMode ? 'rgba(40, 40, 40, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+        borderRadius: 4,
+        padding: 4,
+        // A mágica acontece aqui:
+        formatter: (value) => value > 0 ? formatarValorAbreviado(value) : ''
+    };
+
+    // ==========================================================
+    //                 FIM DA LÓGICA DE FORMATAÇÃO
+    // ==========================================================
 
     const options = {
         maintainAspectRatio: false,
-        // 2. Adiciona um preenchimento no topo da área do gráfico
-        layout: {
-            padding: {
-                top: 30 // Espaço de 30px no topo para o rótulo "respirar"
-            }
-        },
+        layout: { padding: { top: 30 } },
         plugins: {
-            legend: { 
-                display: false 
-            },
-            datalabels: {
-                display: true,
-                anchor: 'end',
-                align: 'top',
-                offset: 8,
-                color: isDarkMode ? '#e0e0e0' : '#15191d',
-                font: {
-                    size: 10,
-                    weight: 'bold'
-                },
-                formatter: (value) => value > 0 ? value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '',
-                backgroundColor: isDarkMode ? 'rgba(40, 40, 40, 0.7)' : 'rgba(255, 255, 255, 0.7)',
-                borderRadius: 4,
-                padding: 4
-            }
+            legend: { display: false },
+            datalabels: datalabelsConfig // Aplica a configuração unificada
         },
-      scales: {
+        scales: {
             y: { 
                 grid: { display: true, drawBorder: false }, 
                 ticks: { display: true },
-                // 3. Sugere um valor máximo 10% maior que o pico real
                 suggestedMax: maxDataValue * 1.1 
             },
             x: { 
                 grid: { display: false },
                 ticks: {
-                    // 1. Deixa os rótulos retos em todas as telas
                     maxRotation: 0,
                     minRotation: 0,
-
-                    // 2. Aumenta a quantidade de rótulos visíveis
-                    maxTicksLimit: isMobile ? 7 : 31, // Mostra mais dias no mobile e até 31 no desktop
-                    
-                    // 3. Diminui o tamanho da fonte
-                    font: {
-                        size: 10 
-                    },
-                    autoSkip: true, // Mantém o skip automático para evitar sobreposição se necessário
-                    padding: 5 // Adiciona um pequeno espaço entre o eixo e os rótulos
+                    maxTicksLimit: isMobile ? 7 : 31,
+                    font: { size: 10 },
+                    autoSkip: true,
+                    padding: 5
                 }
             }
         }
     };
 
     const data = {
-         labels: sorted.map(([data]) => new Date(data + 'T00:00:00').getDate()),
+        labels: sorted.map(([data]) => new Date(data + 'T00:00:00').getDate()),
         datasets: [{
             label: 'Venda Total',
             data: sorted.map(([, val]) => val),
-            
-            // --- ALTERAÇÃO: Cores padronizadas para o azul ---
-borderColor: '#1a0b2a',
+            borderColor: '#1a0b2a',
+            backgroundColor: 'rgba(26, 11, 42, 0.5)',
             pointBackgroundColor: '#1a0b2a',
-            pointHoverBorderColor: '#1a0b2a',
-            
-            // Cor da área sob a linha (convertemos #1a0b2a para RGBA com 50% de opacidade)
-            backgroundColor: 'rgba(26, 11, 42, 0.5)', 
-            
-            // ==========================================================
-            //                     FIM DA ALTERAÇÃO
-            // ==========================================================
-
             pointBorderColor: '#fff',
             pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#1a0b2a',
             pointRadius: 4,
             pointHoverRadius: 6,
             fill: true,
@@ -3235,6 +3233,8 @@ borderColor: '#1a0b2a',
 
     createChart(ctx, 'line', data, options);
 }
+
+
 
 
 function updateVendaSemanaChart(vendasFiltradas) {
