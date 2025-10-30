@@ -1039,6 +1039,50 @@ body.dark-mode .login-page-container {
         cursor: pointer;
     }
 
+/* ========================================================== */
+/*         ESTILO E POSICIONAMENTO DO BOTÃO DE REFRESH        */
+/* ========================================================== */
+
+/* 1. Garante que o contêiner de filtros posicione o botão à direita */
+.filters-container {
+    justify-content: space-between;
+}
+
+/* 2. Estiliza o botão para o padrão do sistema (desktop ) */
+#refresh-dashboard-btn {
+    background-color: var(--primary-color); /* Cor azul primária */
+    border: none;
+    color: #ffffff; /* Cor do ícone branca */
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 3. Efeito hover para desktop */
+#refresh-dashboard-btn:hover {
+    background-color: #0041a3; /* Tom de azul mais escuro */
+    transform: rotate(90deg); /* Efeito de rotação */
+}
+
+#refresh-dashboard-btn svg {
+    pointer-events: none;
+}
+
+/* ========================================================== */
+/*     CONTROLE DE VISIBILIDADE (DESKTOP vs MOBILE)           */
+/* ========================================================== */
+
+/* 4. Esconde o botão por padrão em telas pequenas (mobile-first) */
+@media (max-width: 768px) {
+    #refresh-dashboard-btn {
+        display: none;
+    }
+}
 
     
 /* ================================================================== */
@@ -1315,6 +1359,12 @@ body.dark-mode .login-page-container {
                         <label for="filter-year">Ano:</label>
                         <select id="filter-year"></select>
                     </div>
+                            <button id="refresh-dashboard-btn" title="Recarregar Dados">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+        </button>
                 </div>
                 <div class="cards-container">
                     <div class="card"><h3 id="card-venda-total-label">Venda Total</h3><p id="card-venda-total">R$ 0,00</p></div>
@@ -1720,7 +1770,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const vendasFilterLoja = document.getElementById('vendas-filter-loja');
     const clearVendasFiltersBtn = document.getElementById('clear-vendas-filters-btn');
 
-    
+        const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
+
+    // Adiciona uma verificação para o caso do elemento não existir
+    if (refreshDashboardBtn) {
+        // 2. Adiciona o evento de clique
+        refreshDashboardBtn.addEventListener('click', () => {
+            // 3. Recarrega a página inteira, simulando um F5
+            location.reload();
+        });
+    }
     // --- BANCO DE DADOS (localStorage) e ESTADO DA SESSÃO ---
     let lojas = [];
     let vendas = [];
@@ -3478,3 +3537,4 @@ function updateVendaAnualChart() {
 
 </body>
 </html>
+
