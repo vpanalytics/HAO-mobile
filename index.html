@@ -365,12 +365,32 @@
         padding: 25px;
         border-radius: 12px;
         box-shadow: var(--shadow);
-        height: 350px;
+        /* height: 350px;  <-- REMOVA OU COMENTE ESTA LINHA */
         display: flex;
         flex-direction: column;
         position: relative;
         min-height: 0;
     }
+
+
+
+    
+/* ========================================================== */
+/*      NOVA ABORDAGEM PARA SCROLL DOS GRÁFICOS DE LOJA       */
+/* ========================================================== */
+
+/* 1. Define uma altura fixa e scroll para os wrappers de gráficos com rolagem */
+.chart-wrapper.scrollable {
+    height: 450px; /* Altura fixa total do card */
+    overflow-y: auto;
+     /* Ativa o scroll vertical */
+}
+
+/* 2. Garante que o canvas dentro de um wrapper com scroll possa crescer */
+.chart-wrapper.scrollable canvas {
+    min-height: 400px; /* Altura mínima inicial */
+    height: auto !important; /* Permite que a altura seja definida pelo JS */
+}
 
     .chart-wrapper-tall {
         height: 450px;
@@ -885,6 +905,27 @@ body.dark-mode .login-page-container {
         background-color: var(--primary-color);
         color: #fff;
     }
+/* ========================================================== */
+/*      ABORDAGEM FINAL PARA SCROLL COM TÍTULO FIXO (v3.1)    */
+/* ========================================================== */
+
+/* 1. O novo contêiner do canvas é quem controla o scroll */
+.chart-canvas-container-scroll {
+    flex-grow: 1; /* Faz o contêiner ocupar o espaço restante abaixo do título */
+    position: relative;
+    overflow-y: auto; /* Aplica a barra de rolagem aqui */
+    
+    /* Adiciona o espaçamento para a barra de rolagem não colar na borda */
+    padding-right: 10px;
+    background-clip: content-box;
+}
+
+/* 2. O canvas pode crescer livremente dentro do contêiner de scroll */
+.chart-canvas-container-scroll canvas {
+    width: 100% !important;
+    height: auto !important; /* A altura será definida pelo JS */
+}
+
 
     /* ================================================================== */
     /* NOVOS ESTILOS PARA A LINHA MENSAL/ANUAL */
@@ -1291,6 +1332,66 @@ body.dark-mode .login-page-container {
         display: none;
     }}
 
+    /* ========================================================== */
+/*      NOVOS ESTILOS PARA O SCROLL DOS GRÁFICOS DE LOJA      */
+/* ========================================================== */
+
+.chart-scroll-container {
+    position: relative;
+    height: 100%; /* Ocupa a altura restante do .chart-wrapper */
+    overflow-y: auto; /* Adiciona a barra de rolagem vertical quando necessário */
+}
+
+/* Garante que o canvas possa crescer internamente */
+.chart-scroll-container canvas {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important; /* A altura será definida via JS */
+}
+
+/* ========================================================== */
+/*      ESTILOS FINAIS E ISOLADOS PARA GRÁFICOS COM SCROLL    */
+/* ========================================================== */
+
+/* 1. Define a altura fixa APENAS para os wrappers com a classe de scroll */
+.chart-wrapper.chart-wrapper-scrollable {
+    height: 450px;
+}
+
+/* 2. O contêiner interno controla a área de rolagem */
+.chart-scroll-area {
+    flex-grow: 1; 
+    position: relative;
+    overflow-y: auto; 
+    
+    padding-right: 10px;
+    background-clip: content-box;
+}
+
+/* 3. O canvas dentro da área de scroll pode crescer */
+.chart-scroll-area canvas {
+    width: 100% !important;
+    height: auto !important; 
+}
+/* ================================================================== */
+/*      BLOCO DE ANULAÇÃO PARA GARANTIR O GRÁFICO DE LINHA        */
+/* ================================================================== */
+
+/* 
+  Esta regra garante que o contêiner do gráfico de Dia/Semana
+  NÃO seja afetado pelas configurações de scroll dos outros gráficos,
+  forçando-o a voltar ao seu estado original.
+*/
+.charts-container .chart-wrapper .chart-canvas-container {
+    position: relative !important;
+    flex-grow: 1 !important;
+    height: 92% !important; /* Força a altura original */
+    overflow: visible !important; /* Garante que não haja scroll indesejado */
+    padding: 0 !important; /* Remove qualquer padding que possa ter sido herdado */
+}
+#temporal-chart-container {
+    display: block; /* Anula o "display: grid" da classe .charts-container */
+}
 </style>
 </head>
 <body>
@@ -1385,39 +1486,70 @@ body.dark-mode .login-page-container {
                     <div class="card"><h3 id="card-venda-media-label">Venda Média/Dia</h3><p id="card-venda-media">R$ 0,00</p></div>
                 </div>
                 
-                <div class="charts-container-3-cols">
-                    <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title"> Unidades Vendidas por Modelo</div><canvas id="ranking-modelo-chart"></canvas></div>
-                    <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title"> Unidades Vendidas por Loja</div><canvas id="ranking-lojas-chart"></canvas></div>
-                    <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title">Share de Vendas por Loja</div><canvas id="participacao-lojas-chart"></canvas></div>
-                </div>
+<div class="charts-container-3-cols">
+    <!-- Gráfico de Modelo (inalterado) -->
+    <div class="chart-wrapper chart-wrapper-tall">
+        <div class="chart-title"> Unidades Vendidas por Modelo</div>
+        <canvas id="ranking-modelo-chart"></canvas>
+    </div>
+    
+    <!-- Gráfico de Loja 1 com estrutura de scroll -->
+    <div class="chart-wrapper chart-wrapper-scrollable">
+        <div class="chart-title"> Unidades Vendidas por Loja</div>
+        <div class="chart-scroll-area">
+            <canvas id="ranking-lojas-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Gráfico de Loja 2 com estrutura de scroll -->
+    <div class="chart-wrapper chart-wrapper-scrollable">
+        <div class="chart-title">Share de Vendas por Loja</div>
+        <div class="chart-scroll-area">
+            <canvas id="participacao-lojas-chart"></canvas>
+        </div>
+    </div>
+</div>
+
+
+
+
                 <div class="charts-container-3-cols">
                     <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title">Unidades Vendidas por Tipo de Loja</div><canvas id="venda-tipo-loja-chart"></canvas></div>
                     <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title">Unidades Vendidas por GRC</div><canvas id="ranking-grc-chart"></canvas></div>
                     <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title">Unidades Vendidas por Modalidade </div><canvas id="venda-forma-pagamento-chart"></canvas></div>
                 </div>
-                <!-- GRÁFICOS TEMPORAIS UNIFICADOS -->
-                <!-- GRÁFICOS TEMPORAIS UNIFICADOS -->
-                <div class="charts-container">
-                    <div class="chart-wrapper">
-                        <!-- Cabeçalho com Título e Botões -->
-                        <div class="chart-header-controls">
-                            <!-- ALTERAÇÃO: Removido o style="text-align: left;" -->
-                            <div id="temporal-chart-title" class="chart-title" style="margin-bottom: 0;">Venda por Dia</div>
-                            <div class="chart-toggle-buttons">
-                                <button id="toggle-dia-btn" class="toggle-btn active">Dia</button>
-                                <button id="toggle-semana-btn" class="toggle-btn">Semana</button>
-                            </div>
-                        </div>
+<!-- ========================================================== -->
+<!-- ========================================================== -->
+<!--           CORREÇÃO FINAL: ISOLAMENTO COM ID                -->
+<!-- ========================================================== -->
+<!-- GRÁFICOS TEMPORAIS UNIFICADOS -->
+<!-- Adicionado um ID para criar uma regra de CSS exclusiva -->
+<div id="temporal-chart-container" class="charts-container">
+    <div class="chart-wrapper">
+        <!-- Cabeçalho com Título e Botões -->
+        <div class="chart-header-controls">
+            <div id="temporal-chart-title" class="chart-title" style="margin-bottom: 0;">Venda por Dia</div>
+            <div class="chart-toggle-buttons">
+                <button id="toggle-dia-btn" class="toggle-btn active">Dia</button>
+                <button id="toggle-semana-btn" class="toggle-btn">Semana</button>
+            </div>
+        </div>
 
-                        <!-- Contêiner para os Canvas (um visível, outro escondido) -->
-                        <div id="venda-dia-container" class="chart-canvas-container">
-                            <canvas id="venda-dia-chart"></canvas>
-                        </div>
-                        <div id="venda-semana-container" class="chart-canvas-container hidden">
-                            <canvas id="venda-semana-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
+        <!-- Contêiner para os Canvas (estrutura original) -->
+        <div id="venda-dia-container" class="chart-canvas-container">
+            <canvas id="venda-dia-chart"></canvas>
+        </div>
+        <div id="venda-semana-container" class="chart-canvas-container hidden">
+            <canvas id="venda-semana-chart"></canvas>
+        </div>
+    </div>
+</div>
+<!-- ========================================================== -->
+<!--                        FIM DA CORREÇÃO                       -->
+<!-- ========================================================== -->
+
+
+
 
 
                                 <!-- GRÁFICOS MENSAL E ANUAL NA MESMA LINHA -->
@@ -2131,7 +2263,7 @@ function renderTabelaVendas() {
             }
         };
         
-        const formasPagamento = ["Dinheiro", "Pix", "Crédito 1x", "Crédito 2x", "Crédito 3x", "Crédito 4x", "Crédito 5x", "Crédito 6x", "Crédito 7x", "Crédito 8x", "Crédito 9x", "Crédito 10x", "Crédito 11x", "Crédito 12x"];
+        const formasPagamento = ["Débito", "Pix", "Crédito 1x", "Crédito 2x", "Crédito 3x", "Crédito 4x", "Crédito 5x", "Crédito 6x", "Crédito 7x", "Crédito 8x", "Crédito 9x", "Crédito 10x", "Crédito 11x", "Crédito 12x", "Crédito 18x"];
         vendaFormaPagamentoSelect.innerHTML = formasPagamento.map(f => `<option value="${f}">${f}</option>`).join('');
 
         const calcularVendaTotal = () => {
@@ -2760,6 +2892,8 @@ function renderProdutosLista() {
     }
 
     function updateDashboard() {
+        document.getElementById('venda-dia-chart').closest('.chart-wrapper').style.height = '350px';
+
         const vendasFiltradas = getFilteredVendas();
         const vendaTotal = vendasFiltradas.reduce((sum, v) => sum + (v.valor * v.quantidade), 0);
         const totalUnidades = vendasFiltradas.reduce((sum, v) => sum + v.quantidade, 0);
@@ -2881,6 +3015,20 @@ function updateRankingLojasChart(vendasFiltradas) {
         return acc;
     }, {});
     const sortedLojas = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
+    // ==========================================================
+    //                 INÍCIO DA ALTERAÇÃO (LÓGICA DE ALTURA)
+    // ==========================================================
+    const numeroDeLojas = sortedLojas.length;
+    const alturaPorBarra = 25; // Altura em pixels para cada barra
+    
+    // Calcula a altura total que o canvas precisa ter
+    const alturaTotalCanvas = numeroDeLojas * alturaPorBarra;
+    
+    // Define a ALTURA MÍNIMA do canvas. Se for maior que o wrapper, o scroll aparece.
+    ctx.canvas.style.minHeight = `${alturaTotalCanvas}px`;
+    // ==========================================================
+    //                  FIM DA ALTERAÇÃO
+    // ==========================================================
 
     const gradient = ctx.createLinearGradient(0,0, 0, ctx.canvas.height); // Gradiente horizontal
     gradient.addColorStop(1, '#f5d393'); // Cor inicial (esquerda, mais clara)
@@ -2893,6 +3041,7 @@ function updateRankingLojasChart(vendasFiltradas) {
             data: sortedLojas.map(([, qtd]) => qtd),
             backgroundColor: gradient,
             borderRadius: 18
+
         }]
     }, { 
         indexAxis: 'y', 
@@ -2913,7 +3062,6 @@ function updateRankingLojasChart(vendasFiltradas) {
 
 function updateParticipacaoChart(vendasFiltradas) {
     const ctx = document.getElementById('participacao-lojas-chart').getContext('2d');
-    
     // 1. Calcula a venda total em VALOR (R$), que será o nosso 100%.
     const vendaTotalValor = vendasFiltradas.reduce((sum, v) => sum + (v.valor * v.quantidade), 0);
 
@@ -2927,7 +3075,19 @@ function updateParticipacaoChart(vendasFiltradas) {
     }, {});
 
     const sorted = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
+    // ==========================================================
+    //                 INÍCIO DA ALTERAÇÃO (LÓGICA DE ALTURA)
+    // ==========================================================
+    const numeroDeLojas = sorted.length;
+    const alturaPorBarra = 25; // Altura em pixels para cada barra
     
+    const alturaTotalCanvas = numeroDeLojas * alturaPorBarra;
+    
+    ctx.canvas.style.minHeight = `${alturaTotalCanvas}px`;
+    // ==========================================================
+    //                  FIM DA ALTERAÇÃO
+    // ==========================================================
+
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
     const isDarkMode = document.body.classList.contains('dark-mode');
         gradient.addColorStop(1, '#f39772'); // Cor inicial (esquerda, mais clara)
@@ -3300,10 +3460,22 @@ function updateVendaDiaChart(vendasFiltradas) {
 
     const options = {
         maintainAspectRatio: false,
-        layout: { padding: { top: 30 } },
+        // ==========================================================
+        //           INÍCIO DA CORREÇÃO (PADDING LATERAL)
+        // ==========================================================
+        layout: {
+            padding: {
+                top: 30,    // Mantém um respiro no topo
+                left: 15,   // Adiciona espaço na esquerda para o primeiro rótulo
+                right: 25   // Adiciona espaço na direita para o último rótulo
+            }
+        },
+        // ==========================================================
+        //            FIM DA CORREÇÃO (PADDING LATERAL)
+        // ==========================================================
         plugins: {
             legend: { display: false },
-            datalabels: datalabelsConfig // Aplica a configuração unificada
+            datalabels: datalabelsConfig 
         },
         scales: {
             y: { 
@@ -3590,4 +3762,5 @@ function updateVendaAnualChart() {
 
 </body>
 </html>
+
 
