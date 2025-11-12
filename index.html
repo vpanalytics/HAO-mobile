@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1423,7 +1424,7 @@ body.dark-mode .login-page-container {
 
             </div>
             <div class="login-image-container">
-                <img src="https://victorpaulovichbueno-gif.github.io/FOTO-HAO/unnamed.jpg" alt="Moto Elétrica Macchina" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="https://vpanalytics.github.io/imagem-login-HAO/MOTO.png" alt="Moto Elétrica Macchina" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
         </div>
     </div>
@@ -1497,15 +1498,18 @@ body.dark-mode .login-page-container {
     <div class="chart-wrapper chart-wrapper-scrollable">
         <div class="chart-title"> Unidades Vendidas por Loja</div>
         <div class="chart-scroll-area">
-            <canvas id="ranking-lojas-chart"></canvas>
-        </div>
+    <div id="ranking-lojas-canvas-container">  <!-- NOVA DIV ADICIONADA -->
+        <canvas id="ranking-lojas-chart"></canvas>
+    </div>
+</div>
+
     </div>
 
     <!-- Gráfico de Loja 2 com estrutura de scroll -->
     <div class="chart-wrapper chart-wrapper-scrollable">
         <div class="chart-title">Share de Vendas por Loja</div>
         <div class="chart-scroll-area">
-            <canvas id="participacao-lojas-chart"></canvas>
+            <div id="participacao-lojas-canvas-container"><canvas id="participacao-lojas-chart"></canvas></div>
         </div>
     </div>
 </div>
@@ -3016,20 +3020,19 @@ function updateRankingLojasChart(vendasFiltradas) {
     }, {});
     const sortedLojas = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
     // ==========================================================
-    //                 INÍCIO DA ALTERAÇÃO (LÓGICA DE ALTURA)
+    //       INÍCIO DA LÓGICA DE ALTURA (ABORDAGEM FINAL)
     // ==========================================================
     const numeroDeLojas = sortedLojas.length;
-    const alturaPorBarra = 25; // Altura em pixels para cada barra
-    
-    // Calcula a altura total que o canvas precisa ter
-    const alturaTotalCanvas = numeroDeLojas * alturaPorBarra;
-    
-    // Define a ALTURA MÍNIMA do canvas. Se for maior que o wrapper, o scroll aparece.
-    ctx.canvas.style.minHeight = `${alturaTotalCanvas}px`;
-    // ==========================================================
-    //                  FIM DA ALTERAÇÃO
-    // ==========================================================
+    const alturaPorBarra = 30; // Espaço total para cada barra
+    const alturaTotalContainer = numeroDeLojas * alturaPorBarra;
 
+    // Pega a NOVA DIV que envolve o canvas
+    const canvasContainer = document.getElementById('ranking-lojas-canvas-container');
+    // Define a altura da DIV, não do canvas!
+    canvasContainer.style.height = `${alturaTotalContainer}px`;
+    // ==========================================================
+    //                       FIM DA LÓGICA
+    // ==========================================================
     const gradient = ctx.createLinearGradient(0,0, 0, ctx.canvas.height); // Gradiente horizontal
     gradient.addColorStop(1, '#f5d393'); // Cor inicial (esquerda, mais clara)
     gradient.addColorStop(0, '#f5d393'); // Cor final (direita, mais escura)
@@ -3040,11 +3043,12 @@ function updateRankingLojasChart(vendasFiltradas) {
             label: 'Unidades Vendidas',
             data: sortedLojas.map(([, qtd]) => qtd),
             backgroundColor: gradient,
-            borderRadius: 18
-
+            borderRadius: 18,
+            barThickness: 18
         }]
     }, { 
-        indexAxis: 'y', 
+        indexAxis: 'y',
+        maintainAspectRatio: false, 
         plugins: { 
             legend: { display: false },
             datalabels: {
@@ -3075,18 +3079,15 @@ function updateParticipacaoChart(vendasFiltradas) {
     }, {});
 
     const sorted = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
-    // ==========================================================
-    //                 INÍCIO DA ALTERAÇÃO (LÓGICA DE ALTURA)
-    // ==========================================================
-    const numeroDeLojas = sorted.length;
-    const alturaPorBarra = 25; // Altura em pixels para cada barra
-    
-    const alturaTotalCanvas = numeroDeLojas * alturaPorBarra;
-    
-    ctx.canvas.style.minHeight = `${alturaTotalCanvas}px`;
-    // ==========================================================
-    //                  FIM DA ALTERAÇÃO
-    // ==========================================================
+
+    // Lógica de altura dinâmica para o gráfico de Share de Vendas
+    const numeroDeLojasParticipacao = sorted.length;
+    const alturaPorBarraParticipacao = 30; // Espaço total para cada barra
+    const alturaTotalContainerParticipacao = numeroDeLojasParticipacao * alturaPorBarraParticipacao;
+
+    const canvasContainerParticipacao = document.getElementById('participacao-lojas-canvas-container');
+    canvasContainerParticipacao.style.height = `${alturaTotalContainerParticipacao}px`;
+
 
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
     const isDarkMode = document.body.classList.contains('dark-mode');
@@ -3764,3 +3765,5 @@ function updateVendaAnualChart() {
 </html>
 
 
+
+Manus
