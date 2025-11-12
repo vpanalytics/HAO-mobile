@@ -2895,33 +2895,76 @@ function renderProdutosLista() {
         });
     }
 
-    function updateDashboard() {
-        document.getElementById('venda-dia-chart').closest('.chart-wrapper').style.height = '350px';
+// ==========================================================
+//           INÍCIO DA CORREÇÃO (CÁLCULO DOS CARDS v3)
+// ==========================================================
+function updateDashboard() {
+    document.getElementById('venda-dia-chart').closest('.chart-wrapper').style.height = '350px';
 
-        const vendasFiltradas = getFilteredVendas();
-        const vendaTotal = vendasFiltradas.reduce((sum, v) => sum + (v.valor * v.quantidade), 0);
-        const totalUnidades = vendasFiltradas.reduce((sum, v) => sum + v.quantidade, 0);
-        const ticketMedio = totalUnidades > 0 ? vendaTotal / totalUnidades : 0;
-        const diasUnicos = new Set(vendasFiltradas.map(v => v.data)).size;
-        const vendaMediaDia = diasUnicos > 0 ? vendaTotal / diasUnicos : 0;
+    const vendasFiltradas = getFilteredVendas();
+    const vendaTotal = vendasFiltradas.reduce((sum, v) => sum + (v.valor * v.quantidade), 0);
+    const totalUnidades = vendasFiltradas.reduce((sum, v) => sum + v.quantidade, 0);
+    const ticketMedio = totalUnidades > 0 ? vendaTotal / totalUnidades : 0;
 
-        document.getElementById('card-venda-total').textContent = vendaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        document.getElementById('card-unidades').textContent = totalUnidades;
-        document.getElementById('card-ticket-medio').textContent = ticketMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        document.getElementById('card-venda-media').textContent = vendaMediaDia.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        
-        updateRankingLojasChart(vendasFiltradas);
-        updateRankingModeloChart(vendasFiltradas);
-        updateVendaTipoLojaChart(vendasFiltradas);
-        updateVendaFormaPagamentoChart(vendasFiltradas);
-        updateRankingGRCChart(vendasFiltradas);
-        updateParticipacaoChart(vendasFiltradas, totalUnidades);
-        updateVendaDiaChart(vendasFiltradas);
-        updateVendaSemanaChart(vendasFiltradas);
-        updateVendaMensalChart();
-        updateVendaAnualChart();
-        updateDetalheVendasTable(vendasFiltradas);
+    // --- LÓGICA FINAL E REFINADA PARA VENDA MÉDIA/DIA ---
+    const selectedMonth = filterMonth.value;
+    const selectedYear = filterYear.value;
+    let numeroDeDiasParaMedia;
+
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtual = hoje.getMonth();
+
+    if (selectedMonth !== 'all' && selectedYear !== 'all') {
+        const anoSelecionadoInt = parseInt(selectedYear);
+        const mesSelecionadoInt = parseInt(selectedMonth);
+
+        if (anoSelecionadoInt === anoAtual && mesSelecionadoInt === mesAtual) {
+            // CASO 1: É o mês e ano ATUAIS.
+            if (vendasFiltradas.length > 0) {
+                // Pega o dia da última venda registrada no período.
+                const ultimoDiaComVenda = Math.max(...vendasFiltradas.map(v => new Date(v.data + 'T00:00:00').getDate()));
+                numeroDeDiasParaMedia = ultimoDiaComVenda;
+            } else {
+                // Se não houver vendas no mês atual ainda, a média é 0, dividindo por 1 para evitar erro.
+                numeroDeDiasParaMedia = 1;
+            }
+        } else {
+            // CASO 2: É um mês passado. A média é dividida pelo total de dias daquele mês.
+            numeroDeDiasParaMedia = new Date(anoSelecionadoInt, mesSelecionadoInt + 1, 0).getDate();
+        }
+    } else {
+        // Fallback: se nenhum filtro de data está aplicado, usa dias com vendas.
+        numeroDeDiasParaMedia = new Set(vendas.map(v => v.data)).size || 1;
     }
+
+    const vendaMediaDia = numeroDeDiasParaMedia > 0 ? vendaTotal / numeroDeDiasParaMedia : 0;
+    // --- FIM DA LÓGICA FINAL ---
+
+    document.getElementById('card-venda-total').textContent = vendaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('card-unidades').textContent = totalUnidades;
+    document.getElementById('card-ticket-medio').textContent = ticketMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('card-venda-media').textContent = vendaMediaDia.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    
+    // O restante da função continua igual...
+    updateRankingLojasChart(vendasFiltradas);
+    updateRankingModeloChart(vendasFiltradas);
+    updateVendaTipoLojaChart(vendasFiltradas);
+    updateVendaFormaPagamentoChart(vendasFiltradas);
+    updateRankingGRCChart(vendasFiltradas);
+    updateParticipacaoChart(vendasFiltradas, totalUnidades);
+    updateVendaDiaChart(vendasFiltradas);
+    updateVendaSemanaChart(vendasFiltradas);
+    updateVendaMensalChart();
+    updateVendaAnualChart();
+    updateDetalheVendasTable(vendasFiltradas);
+}
+// ==========================================================
+//                        FIM DA CORREÇÃO
+// ==========================================================
+
+
+
 
     function createChart(ctx, type, data, options) {
         const chartId = ctx.canvas.id;
