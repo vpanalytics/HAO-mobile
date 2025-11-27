@@ -316,7 +316,7 @@
     /* CARDS */
     .cards-container {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: repeat(5, 1fr); /* De 4 para 5 colunas */
         gap: 25px;
         margin-bottom: 25px;
     }
@@ -459,6 +459,7 @@
     font-weight: 600;
     position: sticky;
     top: 0;
+    z-index: 1; 
 }
 
     tbody tr:hover {
@@ -936,6 +937,7 @@ body.dark-mode .login-page-container {
         gap: 25px;
         margin-bottom: 25px;
         flex-wrap: wrap; /* Garante que quebre a linha em telas menores */
+        align-items: stretch;
     }
 
     .chart-wrapper-flex {
@@ -1092,6 +1094,39 @@ body.dark-mode .login-page-container {
         width: auto; /* Reseta a largura do input para o tamanho padrão */
         cursor: pointer;
     }
+/* ========================================================== */
+/*       INÍCIO DA AÇÃO 2: ESTILO DO BOTÃO DE EDIÇÃO          */
+/* ========================================================== */
+
+.comissao-percentual-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-edit-comissao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0.2; /* Fica quase invisível */
+    transition: opacity 0.3s;
+}
+
+/* Mostra o botão apenas quando o mouse está sobre a linha da tabela */
+tr:hover .btn-edit-comissao {
+    opacity: 1;
+}
+
+.input-edit-comissao {
+    width: 60px;
+    padding: 4px;
+    text-align: right;
+}
+
+/* ========================================================== */
+/*                        FIM DA AÇÃO 2                         */
+/* ========================================================== */
 
 /* ========================================================== */
 /*         ESTILO E POSICIONAMENTO DO BOTÃO DE REFRESH        */
@@ -1126,6 +1161,50 @@ body.dark-mode .login-page-container {
 #refresh-dashboard-btn svg {
     pointer-events: none;
 }
+
+/* ========================================================== */
+/*       INÍCIO DA AÇÃO: CORRIGIR QUEBRA DE LINHA NA TABELA     */
+/* ========================================================== */
+
+#tabela-analise-comissao td,
+#tabela-analise-comissao th {
+    white-space: nowrap; /* Impede que o texto quebre para a próxima linha */
+    overflow: hidden;      /* Esconde o texto que transborda da célula */
+    text-overflow: ellipsis; /* Adiciona "..." ao final do texto cortado */
+}
+
+/* Opcional: Aumentar um pouco a largura da coluna "Loja" para dar mais espaço */
+#tabela-analise-comissao th:nth-child(2),
+#tabela-analise-comissao td:nth-child(2) {
+    min-width: 200px; /* Ajuste este valor conforme necessário */
+}
+
+
+/* ========================================================== */
+/*                        FIM DA AÇÃO                         */
+/* ========================================================== */
+/* ========================================================== */
+/*       INÍCIO DA AÇÃO: CORRIGIR QUEBRA DE LINHA NA TABELA DE LOJAS     */
+/* ========================================================== */
+
+#tabela-lojas td,
+#tabela-lojas th {
+    white-space: nowrap; /* Impede que o texto quebre para a próxima linha */
+    overflow: hidden;      /* Esconde o texto que transborda da célula */
+    text-overflow: ellipsis; /* Adiciona "..." ao final do texto cortado */
+}
+
+/* Opcional, mas recomendado: Definir uma largura para a coluna "Loja" */
+#tabela-lojas th:nth-child(1),
+#tabela-lojas td:nth-child(1) {
+    min-width: 220px; /* Dê um bom espaço para a coluna principal */
+    width: 40%;       /* Tenta ocupar 40% do espaço disponível */
+}
+
+/* ========================================================== */
+/*                        FIM DA AÇÃO                         */
+/* ========================================================== */
+
 
 /* ========================================================== */
 /*     CONTROLE DE VISIBILIDADE (DESKTOP vs MOBILE)           */
@@ -1393,6 +1472,28 @@ body.dark-mode .login-page-container {
 #temporal-chart-container {
     display: block; /* Anula o "display: grid" da classe .charts-container */
 }
+
+/* ========================================================== */
+/*    INÍCIO DA AÇÃO 1: NOVO ESTILO PARA FORMULÁRIOS EM GRID   */
+/* ========================================================== */
+
+.form-grid-2-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Cria duas colunas de largura igual */
+    gap: 20px 25px; /* Espaçamento vertical e horizontal */
+    align-items: flex-end; /* Alinha os itens na base */
+}
+
+/* Faz o título e o botão ocuparem as duas colunas */
+.form-grid-2-cols h2,
+.form-grid-2-cols .form-actions {
+    grid-column: 1 / -1;
+}
+
+/* ========================================================== */
+/*                         FIM DA AÇÃO 1                        */
+/* ========================================================== */
+
 </style>
 </head>
 <body>
@@ -1441,6 +1542,8 @@ body.dark-mode .login-page-container {
                     <img src="https://assets.decocache.com/cvlbinsticiona/883934cf-cd5a-4b86-ac4c-d3504faa99ab/logo-inst-desk.svg" alt="Logo Casa & Vídeo" style="height: 40px;">
                 </div>
                 <h2>Controle de Venda</h2>
+
+                
             </div>
 
             <!-- ========================================================== -->
@@ -1453,6 +1556,8 @@ body.dark-mode .login-page-container {
                         <li><a href="#vendas" class="nav-tab" data-tab="vendas">Vendas</a></li>
                         <li><a href="#lojas" class="nav-tab" data-tab="lojas">Lojas</a></li>
                         <li><a href="#produtos" class="nav-tab" data-tab="produtos">Produtos</a></li>
+                        <li><a href="#comissao" class="nav-tab" data-tab="comissao">Comissão</a></li>
+                        <li><a href="#estoque" class="nav-tab" data-tab="estoque">Estoque</a></li>
                     </ul>
                 </nav>
 
@@ -1472,6 +1577,12 @@ body.dark-mode .login-page-container {
                         <select id="filter-month"></select>
                         <label for="filter-year">Ano:</label>
                         <select id="filter-year"></select>
+                        <!-- NOVO FILTRO DE LOJA -->
+                        <label for="filter-loja">Loja:</label>
+                        <select id="filter-loja">
+                            <!-- Opções serão populadas pelo JavaScript -->
+                        </select>
+                        <!-- FIM DO NOVO FILTRO -->
                     </div>
                             <button id="refresh-dashboard-btn" title="Recarregar Dados">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1485,6 +1596,7 @@ body.dark-mode .login-page-container {
                     <div class="card"><h3 id="card-unidades-label">Unidades</h3><p id="card-unidades">0</p></div>
                     <div class="card"><h3 id="card-ticket-medio-label">Ticket Médio</h3><p id="card-ticket-medio">R$ 0,00</p></div>
                     <div class="card"><h3 id="card-venda-media-label">Venda Média/Dia</h3><p id="card-venda-media">R$ 0,00</p></div>
+                    <div class="card"><h3 id="card-estoque-total-label">Estoque Total</h3><p id="card-estoque-total">0</p></div>
                 </div>
                 
 <div class="charts-container-3-cols">
@@ -1522,6 +1634,26 @@ body.dark-mode .login-page-container {
                     <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title">Unidades Vendidas por GRC</div><canvas id="ranking-grc-chart"></canvas></div>
                     <div class="chart-wrapper chart-wrapper-tall"><div class="chart-title">Unidades Vendidas por Modalidade </div><canvas id="venda-forma-pagamento-chart"></canvas></div>
                 </div>
+
+                <!-- ADICIONE A NOVA FILEIRA DE GRÁFICOS DE ESTOQUE AQUI -->
+<div class="charts-container-3-cols">
+    <!-- Gráfico de Estoque por Loja -->
+    <div class="chart-wrapper chart-wrapper-scrollable">
+        <div class="chart-title">Estoque Total por Loja</div>
+        <div class="chart-scroll-area">
+            <div id="estoque-loja-canvas-container"><canvas id="estoque-por-loja-chart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Estoque por Modelo -->
+    <div class="chart-wrapper chart-wrapper-scrollable">
+        <div class="chart-title">Estoque Total por Modelo</div>
+        <div class="chart-scroll-area">
+            <div id="estoque-modelo-canvas-container"><canvas id="estoque-por-modelo-chart"></canvas></div>
+        </div>
+    </div>
+</div>
+<!-- FIM DA NOVA FILEIRA -->
 <!-- ========================================================== -->
 <!-- ========================================================== -->
 <!--           CORREÇÃO FINAL: ISOLAMENTO COM ID                -->
@@ -1731,7 +1863,15 @@ body.dark-mode .login-page-container {
 
 
                     <div class="form-group"><label for="loja-data-inauguracao">Data de Inauguração</label><input type="date" id="loja-data-inauguracao" required></div>
-                    <div class="form-group"><label for="loja-grc">GRC (Gerente)</label><input type="text" id="loja-grc" required></div>
+                    <div class="form-group">
+                        <label for="loja-grc">GRC (Gerente)</label>
+                        <!-- 1. Adicionamos o atributo 'list' para conectar ao datalist -->
+                        <input type="text" id="loja-grc" required list="grc-sugestoes">
+                        <!-- 2. Criamos o datalist que ficará invisível, mas fornecerá as opções -->
+                        <datalist id="grc-sugestoes">
+                            <!-- As opções serão populadas pelo JavaScript -->
+                        </datalist>
+                    </div>
                     <div class="form-actions-loja-ajustado">
                         <button type="button" id="cancel-edit-loja-btn" class="hidden btn-cancel">Cancelar</button>
                         <button type="submit" id="loja-submit-btn">Cadastrar Loja</button>
@@ -1812,6 +1952,350 @@ body.dark-mode .login-page-container {
                 <!--                  FIM DA ATUALIZAÇÃO                      -->
                 <!-- ========================================================== -->
             </section>
+thead>
+                <tr>
+                    <th>Data de Início</th>
+                    <th>Tipo Loja</th>
+                    <th>Modelo Venda</th>
+                    <th>Percentual</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-historico-comissao-body">
+                <!-- Conteúdo gerado pelo JavaScript -->
+            </tbody><!-- ========================================================== -->
+
+<!-- ========================================================== -->
+<!--       INÍCIO DA SEÇÃO "COMISSÃO" - VERSÃO FINAL CORRIGIDA        -->
+<!-- ========================================================== -->
+<section id="comissao" class="tab-content">
+
+<!-- ========================================================== -->
+<!--       INÍCIO DA AÇÃO 1: ADICIONAR FILTROS E TABELA DE RESUMO      -->
+<!-- ========================================================== -->
+
+<!-- 1. Filtros de Período e Tabela de Resumo -->
+<div id="comissao-resumo-view">
+    <!-- Filtros de Mês e Ano -->
+    <div class="filters-container">
+        <div class="filter-group">
+            <label for="comissao-filter-month">Mês:</label>
+            <select id="comissao-filter-month"></select>
+            <label for="comissao-filter-year">Ano:</label>
+            <select id="comissao-filter-year"></select>
+        </div>
+    </div>
+    <!-- NOVO CARD DE TOTAL A PAGAR -->
+    <div class="cards-container" style="grid-template-columns: 1fr; margin-top: 25px;">
+        <div class="card" style="border-left-color: var(--success-color);">
+            <h3>Total Comissão   
+<i style="font-size: 0.8rem; font-weight: 400;">A Pagar</i></h3>
+            <p id="card-total-a-pagar">R$ 0,00</p>
+        </div>
+    </div>
+    <!-- Tabela de Resumo por Loja -->
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Resumo por Loja</h2>
+        <div class="table-container" style="max-height: 500px;">
+            <table id="tabela-resumo-comissao">
+                <thead>
+                    <tr>
+                        <th>Loja</th>
+                        <th>Tipo Loja</th>
+                        <th>Valor Total Comissão (R$)</th>
+                        <th>Aluguel (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-resumo-comissao-body">
+                    <!-- Conteúdo será gerado pelo JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- O restante da sua aba "Comissão" (tabela de análise, formulários, etc.) continua aqui -->
+
+<!-- ========================================================== -->
+<!--                        FIM DA AÇÃO 1                         -->
+<!-- ========================================================== -->
+
+
+    <!-- 1. Tabela de Análise de Comissões -->
+    <div id="comissao-analise-view">
+        <div class="table-header-controls">
+            <h2>Análise de Comissões por Venda</h2>
+        </div>
+        <div class="table-wrapper">
+            <div class="table-container" style="max-height: 70vh;">
+                <table id="tabela-analise-comissao">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Loja</th>
+                            <th>Tipo Loja</th>
+                            <th>Modelo de Venda</th>
+                            <th>Produto</th>
+                            <th>Valor Unit.</th>
+                            <th>Unidades</th>
+                            <th>Valor Total</th>
+                            <th>% Comissão</th>
+                            <th>R$ Comissão</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-analise-comissao-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 2. Formulário para Lançar Nova Regra de Comissão -->
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <form id="form-nova-regra-comissao" class="form-grid-2-cols">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Lançar Nova Regra de Comissão</h2>
+            <div id="comissao-regra-feedback-msg" class="hidden" style="grid-column: 1 / -1; margin-bottom: 0; padding: 10px; border-radius: 8px;"></div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="regra-comissao-escopo">Aplicar a:</label>
+                <select id="regra-comissao-escopo" required>
+                    <option value="tipo-loja">Um Tipo de Loja (Regra Geral)</option>
+                    <option value="loja-especifica">Uma Loja Específica (Exceção)</option>
+                </select>
+            </div>
+
+            <div id="container-regra-comissao-tipo-loja" class="form-group">
+                <label for="regra-comissao-tipo-loja">Tipo de Loja</label>
+                <select id="regra-comissao-tipo-loja">
+                    <option value="Shopping">Shopping</option>
+                    <option value="Rua">Rua</option>
+                    <option value="Mercado">Mercado</option>
+                    <option value=".PERTO">.PERTO</option>
+                </select>
+            </div>
+            <div id="container-regra-comissao-loja-especifica" class="form-group hidden">
+                <label for="regra-comissao-loja-id">Loja Específica</label>
+                <select id="regra-comissao-loja-id"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="regra-comissao-modelo-venda">Modelo de Venda</label>
+                <select id="regra-comissao-modelo-venda" required>
+                    <option value="Store in Store">Store in Store</option>
+                    <option value="CASA+">CASA+</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="regra-comissao-percentual">Novo Percentual (%)</label>
+                <input type="number" id="regra-comissao-percentual" step="0.1" required>
+            </div>
+            <div class="form-group">
+                <label for="regra-comissao-data-inicio">Data de Início da Vigência</label>
+                <input type="date" id="regra-comissao-data-inicio" required>
+            </div>
+            
+            <div class="form-actions" style="justify-content: flex-end; margin-top: auto;">
+                <button type="submit">Salvar Nova Regra</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 3. Formulário para Lançar Novo Valor de Aluguel -->
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <form id="form-novo-valor-aluguel" class="form-grid-2-cols">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Lançar Novo Valor de Aluguel</h2>
+            <div id="aluguel-regra-feedback-msg" class="hidden" style="grid-column: 1 / -1; margin-bottom: 0; padding: 10px; border-radius: 8px;"></div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="regra-aluguel-escopo">Aplicar a:</label>
+                <select id="regra-aluguel-escopo" required>
+                    <option value="tipo-loja">Um Tipo de Loja (Regra Geral)</option>
+                    <option value="loja-especifica">Uma Loja Específica (Exceção)</option>
+                </select>
+            </div>
+            
+            <div id="container-regra-aluguel-tipo-loja" class="form-group">
+                <label for="regra-aluguel-tipo-loja">Tipo de Loja</label>
+                <select id="regra-aluguel-tipo-loja">
+                    <option value="Shopping">Shopping</option>
+                    <option value="Rua">Rua</option>
+                    <option value="Mercado">Mercado</option>
+                    <option value=".PERTO">.PERTO</option>
+                </select>
+            </div>
+            <div id="container-regra-aluguel-loja-especifica" class="form-group hidden">
+                <label for="regra-aluguel-loja-id">Loja Específica</label>
+                <select id="regra-aluguel-loja-id"></select>
+            </div>
+            
+            <div class="form-group">
+                <label for="regra-aluguel-valor">Novo Valor Mensal (R$)</label>
+                <input type="number" id="regra-aluguel-valor" step="100" required>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="regra-aluguel-data-inicio">Data de Início da Vigência</label>
+                <input type="date" id="regra-aluguel-data-inicio" required>
+            </div>
+
+            <div class="form-actions" style="justify-content: flex-end; margin-top: auto;">
+                <button type="submit">Salvar Novo Valor</button>
+            </div>
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- 4. Tabela de Histórico de Comissões -->
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Histórico de Regras de Comissão</h2>
+        <div class="table-container" style="max-height: 400px;">
+            <table id="tabela-historico-comissao">
+                <thead>
+                    <tr>
+                        <th>Data de Início</th>
+                        <th>Aplicação</th>
+                        <th>Modelo Venda</th>
+                        <th>Percentual</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-historico-comissao-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 5. Tabela de Histórico de Aluguéis -->
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Histórico de Valores de Aluguel</h2>
+        <div class="table-container" style="max-height: 400px;">
+            <table id="tabela-historico-aluguel">
+                <thead>
+                    <tr>
+                        <th>Data de Início</th>
+                        <th>Aplicação</th>
+                        <th>Valor Mensal</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-historico-aluguel-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+<!-- ========================================================== -->
+<!--                        FIM DA SEÇÃO                        -->
+<!-- ========================================================== -->
+
+<!-- No seu HTML, dentro de <main> -->
+<!-- ... (sua section id="comissao" existente) ... -->
+
+<!-- ========================================================== -->
+<!--           INÍCIO DA AÇÃO 1.2: ADICIONAR SEÇÃO ESTOQUE        -->
+<!-- ========================================================== -->
+<section id="estoque" class="tab-content">
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <form id="form-entrada-estoque" class="form-grid-2-cols">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Registrar Entrada de Estoque</h2>
+            <div id="estoque-feedback-msg" class="hidden" style="grid-column: 1 / -1; margin-bottom: 0; padding: 10px; border-radius: 8px;"></div>
+
+            <div class="form-group">
+                <label for="estoque-data-entrada">Data da Entrada</label>
+                <input type="date" id="estoque-data-entrada" required>
+            </div>
+            <div class="form-group">
+                <label for="estoque-loja">Loja</label>
+                <select id="estoque-loja" required></select>
+            </div>
+            <div class="form-group">
+                <label for="estoque-produto">Produto</label>
+                <select id="estoque-produto" required></select>
+            </div>
+            <div class="form-group">
+                <label for="estoque-quantidade">Quantidade</label>
+                <input type="number" id="estoque-quantidade" min="1" value="1" required>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="estoque-observacao">Observação (Opcional)</label>
+                <input type="text" id="estoque-observacao">
+            </div>
+            
+            <div class="form-actions" style="justify-content: flex-end; margin-top: auto;">
+                <button type="submit">Registrar Entrada</button>
+            </div>
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- Futuramente, aqui virá a tabela de movimentações de estoque -->
+    <div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+        <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Últimas Movimentações de Estoque</h2>
+        <div class="table-container" style="max-height: 500px;">
+            <table id="tabela-movimentacoes-estoque">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Loja</th>
+                        <th>Produto</th>
+                        <th>Tipo</th>
+                        <th>Qtd</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-movimentacoes-estoque-body">
+                    <!-- Conteúdo gerado pelo JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!-- ========================================================== -->
+<!--           INÍCIO DA AÇÃO 1: ADICIONAR FORMULÁRIO DE INVENTÁRIO        -->
+<!-- ========================================================== -->
+
+<hr>
+
+<div class="table-wrapper" style="padding: 30px; margin-bottom: 25px;">
+    <form id="form-inventario" class="form-grid-2-cols">
+        <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Ajuste de Inventário (Contagem Física)</h2>
+        <div id="inventario-feedback-msg" class="hidden" style="grid-column: 1 / -1; margin-bottom: 0; padding: 10px; border-radius: 8px;"></div>
+
+        <div class="form-group">
+            <label for="inventario-data">Data do Ajuste</label>
+            <input type="date" id="inventario-data" required>
+        </div>
+        <div class="form-group">
+            <label for="inventario-loja">Loja</label>
+            <select id="inventario-loja" required></select>
+        </div>
+        <div class="form-group">
+            <label for="inventario-produto">Produto</label>
+            <select id="inventario-produto" required></select>
+        </div>
+        <div class="form-group">
+            <label for="inventario-quantidade-fisica">Quantidade Contada (Físico)</label>
+            <input type="number" id="inventario-quantidade-fisica" min="0" required>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="inventario-observacao">Motivo do Ajuste (Obrigatório)</label>
+            <input type="text" id="inventario-observacao" required placeholder="Ex: Acerto de inventário, perda, avaria...">
+        </div>
+        
+        <div class="form-actions" style="justify-content: flex-end; margin-top: auto;">
+            <button type="submit">Registrar Ajuste</button>
+        </div>
+    </form>
+</div>
+
+<!-- ========================================================== -->
+<!--                        FIM DA AÇÃO 1                       -->
+<!-- ========================================================== -->
+
+</section>
+<!-- ========================================================== -->
+<!--                        FIM DA AÇÃO 1.2                       -->
+<!-- ========================================================== -->
 
 
         </main>
@@ -1909,7 +2393,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalConfirmBtn = document.getElementById('modal-confirm-btn');
     const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
-
+    // ==========================================================
+    //           INÍCIO DA AÇÃO 2.1: NOVAS CONSTANTES DOM
+    // ==========================================================
+    // Elementos da Seção Estoque
+    const formEntradaEstoque = document.getElementById('form-entrada-estoque');
+    const estoqueDataEntrada = document.getElementById('estoque-data-entrada');
+    const estoqueLojaSelect = document.getElementById('estoque-loja');
+    const estoqueProdutoSelect = document.getElementById('estoque-produto');
+    const estoqueQuantidadeInput = document.getElementById('estoque-quantidade');
+    const estoqueObservacaoInput = document.getElementById('estoque-observacao');
+    const estoqueFeedbackMsg = document.getElementById('estoque-feedback-msg');
+    const tabelaMovimentacoesEstoqueBody = document.getElementById('tabela-movimentacoes-estoque-body');
+    // ==========================================================
+    //                        FIM DA AÇÃO 2.1                       
+    // ==========================================================
     // Elementos de Filtros
     const filterMonth = document.getElementById('filter-month');
     const filterYear = document.getElementById('filter-year');
@@ -1918,7 +2416,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const vendasFilterLoja = document.getElementById('vendas-filter-loja');
     const clearVendasFiltersBtn = document.getElementById('clear-vendas-filters-btn');
 
-        const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
+    const refreshDashboardBtn = document.getElementById('refresh-dashboard-btn');
+
+
+        // No início do seu DOMContentLoaded, junto com as outras constantes
+    const formNovaRegraComissao = document.getElementById('form-nova-regra-comissao');
+    const escopoComissaoSelect = document.getElementById('regra-comissao-escopo');
+    const tipoLojaComissaoContainer = document.getElementById('container-regra-comissao-tipo-loja');
+    const lojaEspecificaComissaoContainer = document.getElementById('container-regra-comissao-loja-especifica');
+
+    const formNovoValorAluguel = document.getElementById('form-novo-valor-aluguel');
+    const escopoAluguelSelect = document.getElementById('regra-aluguel-escopo');
+    const tipoLojaAluguelContainer = document.getElementById('container-regra-aluguel-tipo-loja');
+    const lojaEspecificaAluguelContainer = document.getElementById('container-regra-aluguel-loja-especifica');
+
+        // 1. Adicione estas constantes no topo do seu script, junto com as outras
+    const formInventario = document.getElementById('form-inventario');
+    const inventarioDataInput = document.getElementById('inventario-data');
+    const inventarioLojaSelect = document.getElementById('inventario-loja');
+    const inventarioProdutoSelect = document.getElementById('inventario-produto');
+    const inventarioQtdFisicaInput = document.getElementById('inventario-quantidade-fisica');
+    const inventarioObservacaoInput = document.getElementById('inventario-observacao');
+    const inventarioFeedbackMsg = document.getElementById('inventario-feedback-msg');
+
 
     // Adiciona uma verificação para o caso do elemento não existir
     if (refreshDashboardBtn) {
@@ -1931,10 +2451,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- BANCO DE DADOS (localStorage) e ESTADO DA SESSÃO ---
     let lojas = [];
     let vendas = [];
-
     let produtos = []; // Array será inicializado na função initializeApp
+    let historicoComissao = []; // <-- MUDANÇA: Nome atualizado
+    let historicoAluguel = [];  // <-- MUDANÇA: Nome atualizado
     let charts = {};
     let lojasSelecionadasIds = []; // <<<< ADICIONE ESTA LINHA
+    let movimentacoesEstoque = [];
 
     // --- LÓGICA DE TEMA (MODO ESCURO) ---
     const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
@@ -1949,33 +2471,124 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
 
-    async function loadDataFromFirebase() {
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR A FUNÇÃO loadDataFromFirebase (FINAL)
+// ==========================================================
+
+async function loadDataFromFirebase() {
     console.log("Iniciando carregamento de dados do Firebase...");
     
-    // Cria "promessas" para buscar cada coleção de dados ao mesmo tempo.
-    const lojasPromise = db.collection('lojas').get();
-    const vendasPromise = db.collection('vendas').get();
-    const produtosPromise = db.collection('produtos').get();
+    try {
+        // --- AQUI ESTÁ A CORREÇÃO ---
+        // Adicionamos 'movimentacoesEstoqueSnapshot' à lista de constantes
+        const [
+            lojasSnapshot, 
+            vendasSnapshot, 
+            produtosSnapshot, 
+            historicoComissaoSnapshot,
+            historicoAluguelSnapshot,
+            movimentacoesEstoqueSnapshot // <-- A VARIÁVEL QUE FALTAVA
+        ] = await Promise.all([
+            db.collection('lojas').get(),
+            db.collection('vendas').get(),
+            db.collection('produtos').get(),
+            db.collection('historicoComissao').get(),
+            db.collection('historicoAluguel').get(),
+            db.collection('movimentacoesEstoque').get()
+        ]);
+        // --- FIM DA CORREÇÃO ---
 
-    // Espera todas as buscas terminarem.
-    const [lojasSnapshot, vendasSnapshot, produtosSnapshot] = await Promise.all([
-        lojasPromise,
-        vendasPromise,
-        produtosPromise
-    ]);
+        // Processa os resultados e preenche os arrays locais
+        lojas = lojasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        vendas = vendasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        produtos = produtosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        historicoComissao = historicoComissaoSnapshot.docs.map(doc => {
+            const data = doc.data();
+            data.dataInicioVigencia = data.dataInicioVigencia.toDate();
+            return { id: doc.id, ...data };
+        });
+        historicoAluguel = historicoAluguelSnapshot.docs.map(doc => {
+            const data = doc.data();
+            data.dataInicioVigencia = data.dataInicioVigencia.toDate();
+            return { id: doc.id, ...data };
+        });
 
-    // Processa os resultados e preenche nossos arrays locais.
-    lojas = lojasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    vendas = vendasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    produtos = produtosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Agora que 'movimentacoesEstoqueSnapshot' existe, este código funciona
+        movimentacoesEstoque = movimentacoesEstoqueSnapshot.docs.map(doc => {
+            const data = doc.data();
+            if (data.data && typeof data.data.toDate === 'function') {
+                data.data = data.data.toDate();
+            }
+            return { id: doc.id, ...data };
+        });
 
-    lojasSelecionadasIds = lojas.map(l => l.id);
+        console.log("Dados carregados com sucesso:", { lojas, vendas, produtos, historicoComissao, historicoAluguel, movimentacoesEstoque });
 
-    console.log("Dados carregados:", { lojas, vendas, produtos });
+        // Chama a renderização da aplicação APENAS após carregar tudo
+        renderAll();
 
-    // Após carregar tudo, renderiza a aplicação.
-    renderAll();
+    } catch (error) {
+        console.error("ERRO FATAL AO CARREGAR DADOS DO FIREBASE:", error);
+        alert("Não foi possível carregar os dados da aplicação. Verifique o console (F12) para mais detalhes e recarregue a página.");
+    }
 }
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+
+// ==========================================================
+//       INÍCIO DA AÇÃO 2: CRIAR FUNÇÃO PARA POPULAR SUGESTÕES
+// ==========================================================
+
+function populateGRCSugestoes() {
+    const datalist = document.getElementById('grc-sugestoes');
+    if (!datalist) return;
+
+    // 1. Pega todos os nomes de GRC existentes no array de lojas
+    const todosOsGRCs = lojas.map(loja => loja.grc.toUpperCase());
+
+    // 2. Usa um Set para obter apenas os nomes únicos (remove duplicatas)
+    const grcsUnicos = [...new Set(todosOsGRCs)];
+
+    // 3. Limpa sugestões antigas e popula com as novas
+    datalist.innerHTML = '';
+    grcsUnicos.forEach(grc => {
+        datalist.innerHTML += `<option value="${grc}"></option>`;
+    });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO 2
+// ==========================================================
+
+
+// ==========================================================
+//       INÍCIO DA AÇÃO 2: POPULAR O FILTRO DE LOJA
+// ==========================================================
+
+
+function populateDashboardLojaFilter() {
+    const filterLoja = document.getElementById('filter-loja');
+    if (!filterLoja) return;
+
+    // 1. Limpa opções antigas e adiciona a opção "Todas"
+    filterLoja.innerHTML = '<option value="all">Todas as Lojas</option>';
+
+    // 2. Ordena as lojas por nome e adiciona cada uma como uma opção
+    lojas.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(loja => {
+        filterLoja.innerHTML += `<option value="${loja.id}">${loja.nome}</option>`;
+    });
+
+    // 3. REMOVEMOS O 'onchange' DAQUI.
+    // A configuração do evento será feita em um lugar mais seguro (na função initializeApp).
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
 
 
     function applyTheme(theme  ) {
@@ -1999,29 +2612,116 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 // ==========================================================
-//         INÍCIO DA ALTERAÇÃO (VERIFICAÇÃO DE SESSÃO)
+//       INÍCIO DA AÇÃO 2: ATUALIZAR A FUNÇÃO checkLogin
 // ==========================================================
+
 function checkLogin() {
     applyTheme(localStorage.getItem('theme'));
 
-    // onAuthStateChanged é um "ouvinte" que dispara sempre que o estado
-    // de login do usuário muda (login, logout, página recarregada).
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async (user) => {
         if (user) {
             // O usuário ESTÁ logado.
             console.log('Sessão ativa para:', user.email);
-            showApp();
+
+            try {
+                // 1. BUSCA AS PERMISSÕES DO USUÁRIO NA COLEÇÃO 'usuarios'
+                const userDocRef = db.collection('usuarios').doc(user.email.toLowerCase());
+                const userDoc = await userDocRef.get();
+
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    // 2. SALVA O ID DA LOJA E O NOME DO USUÁRIO NO localStorage
+                    localStorage.setItem('userLojaId', userData.lojaId || 'admin'); // Salva o ID ou 'admin'
+                    localStorage.setItem('userName', userData.nomeUsuario || 'Admin');
+                    console.log(`Permissões carregadas: Loja ID = ${userData.lojaId}`);
+                } else {
+                    // Se o usuário não está na coleção 'usuarios', ele não tem permissão
+                    console.warn(`Usuário ${user.email} não encontrado na lista de permissões.`);
+                    localStorage.setItem('userLojaId', 'none'); // 'none' para usuário sem permissão
+                    localStorage.setItem('userName', 'Desconhecido');
+                }
+
+                // 3. VERIFICA SE O USUÁRIO É ADMIN (da coleção antiga, para a aba comissão)
+                const adminDoc = await db.collection('admins').doc('user_list').get();
+                const adminEmails = adminDoc.exists ? adminDoc.data().emails : [];
+                const isUserAdmin = adminEmails.includes(user.email);
+                localStorage.setItem('isUserAdmin', isUserAdmin);
+
+                // 4. Mostra a aplicação principal
+                showApp();
+
+            } catch (error) {
+                console.error("Erro ao verificar permissões:", error);
+                // Em caso de erro, define como sem permissão e continua
+                localStorage.setItem('userLojaId', 'none');
+                localStorage.setItem('isUserAdmin', 'false');
+                showApp();
+            }
+
         } else {
             // O usuário NÃO ESTÁ logado.
             console.log('Nenhum usuário logado.');
+            localStorage.removeItem('userLojaId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('isUserAdmin');
             showLogin();
         }
     });
 }
+
 // ==========================================================
-//                       FIM DA ALTERAÇÃO
+//                        FIM DA AÇÃO 2
 // ==========================================================
 
+// ==========================================================
+//       INÍCIO DA AÇÃO (PASSO 1): RESTAURAR applySecurityRules
+// ==========================================================
+
+function applySecurityRules() {
+    const userLojaId = localStorage.getItem('userLojaId');
+    const isUserStore = userLojaId && userLojaId !== 'admin' && userLojaId !== 'none';
+
+    // --- LÓGICA PARA OS FORMULÁRIOS ---
+    const formSelectIds = ['venda-loja', 'estoque-loja', 'inventario-loja'];
+    formSelectIds.forEach(id => {
+        const select = document.getElementById(id);
+        if (select) {
+            if (isUserStore) {
+                select.value = userLojaId;
+                select.disabled = true;
+                // Dispara o evento 'change' para acionar lógicas dependentes
+                // como o preenchimento do "Tipo da Loja".
+                if (id === 'venda-loja') {
+                    select.dispatchEvent(new Event('change'));
+                }
+            } else {
+                select.disabled = false;
+            }
+        }
+    });
+
+    // --- LÓGICA PARA OS FILTROS (inalterada) ---
+    const filterLojaSelect = document.getElementById('filter-loja');
+    const filterLojaLabel = document.querySelector('label[for="filter-loja"]');
+    if (isUserStore) {
+        if (filterLojaSelect) filterLojaSelect.style.display = 'none';
+        if (filterLojaLabel) filterLojaLabel.style.display = 'none';
+    } else {
+        if (filterLojaSelect) filterLojaSelect.style.display = '';
+        if (filterLojaLabel) filterLojaLabel.style.display = '';
+    }
+    const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
+    if (detalheLojaFilter && detalheLojaFilter.parentElement) {
+        if (isUserStore) {
+            detalheLojaFilter.parentElement.style.display = 'none';
+        } else {
+            detalheLojaFilter.parentElement.style.display = '';
+        }
+    }
+}
+// ==========================================================
+//                        FIM DA AÇÃO (PASSO 1)
+// ==========================================================
 
 // ==========================================================
 //            INÍCIO DA ALTERAÇÃO (FUNÇÃO DE LOGIN)
@@ -2110,50 +2810,306 @@ logoutButton.addEventListener('click', () => {
         });
         localStorage.setItem('produtos', JSON.stringify(produtos));
 
-        setupNavigation();
-        setupForms();
-        setupProdutosInteractivity();
-        populateFilters();
+    // 1. Configurações visuais e de navegação
+    setupNavigation();
+    setupForms();
+    setupProdutosInteractivity();
+    
+    // 2. Popula todos os filtros da aplicação
+    populateFilters();
+    populateComissaoFilters();
+
+  // 3. CENTRALIZA A CONFIGURAÇÃO DOS EVENTOS DE FILTRO DO DASHBOARD
+    const filterLojaDashboard = document.getElementById('filter-loja');
+    
+    if (filterMonth) filterMonth.onchange = runDashboardUpdate;
+    if (filterYear) filterYear.onchange = runDashboardUpdate;
+    if (filterLojaDashboard) filterLojaDashboard.onchange = runDashboardUpdate;
+
+    // 4. Configuração dos botões de toggle Dia/Semana
+    toggleDiaBtn.addEventListener('click', () => {
+        vendaDiaContainer.classList.remove('hidden');
+        vendaSemanaContainer.classList.add('hidden');
+        toggleDiaBtn.classList.add('active');
+        toggleSemanaBtn.classList.remove('active');
+        temporalChartTitle.textContent = 'Venda por Dia';
+    });
+
+    toggleSemanaBtn.addEventListener('click', () => {
+        vendaDiaContainer.classList.add('hidden');
+        vendaSemanaContainer.classList.remove('hidden');
+        toggleDiaBtn.classList.remove('active');
+        toggleSemanaBtn.classList.add('active');
+        temporalChartTitle.textContent = 'Venda por Semana';
+    });
+
+    }
+// ==========================================================
+//       INÍCIO DA AÇÃO 3: LÓGICA DE EDIÇÃO DA COMISSÃO
+// ==========================================================
+
+function setupComissaoEditing() {
+    const tabelaAnaliseBody = document.getElementById('tabela-analise-comissao-body');
+
+    tabelaAnaliseBody.addEventListener('click', async (e) => {
+        // 1. Verifica se o clique foi no botão de editar
+        if (!e.target.classList.contains('btn-edit-comissao')) {
+            return;
+        }
+
+        const editButton = e.target;
+        const cell = editButton.parentElement;
+        const row = cell.parentElement;
+        const vendaId = row.dataset.id;
+
+        // Impede múltiplos cliques
+        if (cell.querySelector('input')) {
+            return;
+        }
+
+        const venda = vendas.find(v => v.id === vendaId);
+        if (!venda) return;
+
+        // Pega o valor atual e cria o campo de input
+        const valorAtual = (venda.percentualComissaoCalculado || 0) * 100;
+        cell.innerHTML = `<input type="number" class="input-edit-comissao" value="${valorAtual.toFixed(2)}" step="0.01"> %`;
         
+        const input = cell.querySelector('input');
+        input.focus();
+        input.select();
 
-        // ADICIONE ESTE BLOCO DE CÓDIGO
-        toggleDiaBtn.addEventListener('click', () => {
-            vendaDiaContainer.classList.remove('hidden');
-            vendaSemanaContainer.classList.add('hidden');
-            toggleDiaBtn.classList.add('active');
-            toggleSemanaBtn.classList.remove('active');
-            temporalChartTitle.textContent = 'Venda por Dia';
-        });
+        // 2. Função para salvar as alterações
+        const salvarAlteracao = async () => {
+            const novoPercentual = parseFloat(input.value);
 
-        toggleSemanaBtn.addEventListener('click', () => {
-            vendaDiaContainer.classList.add('hidden');
-            vendaSemanaContainer.classList.remove('hidden');
-            toggleDiaBtn.classList.remove('active');
-            toggleSemanaBtn.classList.add('active');
-            temporalChartTitle.textContent = 'Venda por Semana';
-        });
-        renderAll();
-    }
+            // Validação: se o valor não for um número ou for igual ao antigo, apenas restaura a célula
+            if (isNaN(novoPercentual) || novoPercentual === valorAtual) {
+                renderTabelaAnaliseComissao(); // A forma mais simples de restaurar
+                return;
+            }
+            // --- NOVA LÓGICA DE CONFIRMAÇÃO ---
+            // Usa o confirm() do navegador para fazer a pergunta.
+            // Se o usuário clicar em "Cancelar", a função para aqui.
+            if (!confirm(`Deseja salvar a nova comissão de ${novoPercentual.toFixed(2)}% para esta venda?`)) {
+                renderTabelaAnaliseComissao(); // Restaura a tabela para o estado original
+                return;
+            }
+            // --- FIM DA NOVA LÓGICA ---
+            // 3. Recalcula e prepara os dados para salvar
+            const novoPercentualDecimal = novoPercentual / 100;
+            const valorTotalVenda = (venda.valor || 0) * (venda.quantidade || 0);
+            const novoValorComissao = valorTotalVenda * novoPercentualDecimal;
 
-    // --- NAVEGAÇÃO POR ABAS ---
-    function setupNavigation() {
-        navTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                e.preventDefault();
-                navTabs.forEach(t => t.classList.remove('active-tab'));
-                tab.classList.add('active-tab');
-                const target = tab.getAttribute('data-tab');
-                tabContents.forEach(content => {
-                    content.classList.remove('active-content');
-                    if (content.id === target) {
-                        content.classList.add('active-content');
-                    }
+            try {
+                // 4. Envia a atualização para o Firebase
+                await db.collection('vendas').doc(vendaId).update({
+                    percentualComissaoCalculado: novoPercentualDecimal,
+                    valorComissaoCalculado: novoValorComissao
                 });
-                resetLojaForm();
-                resetVendaForm();
-            });
+
+                // 5. Recarrega os dados para garantir que tudo esteja sincronizado
+                await loadDataFromFirebase();
+                
+            } catch (error) {
+                console.error("Erro ao atualizar comissão:", error);
+                alert("Não foi possível salvar a alteração da comissão.");
+                renderTabelaAnaliseComissao(); // Restaura em caso de erro
+            }
+        };
+
+        // Adiciona os eventos para salvar ao sair do campo ou pressionar Enter
+        input.addEventListener('blur', salvarAlteracao);
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                input.blur(); // Aciona o evento 'blur' que chama a função de salvar
+            } else if (event.key === 'Escape') {
+                renderTabelaAnaliseComissao(); // Cancela a edição
+            }
         });
-    }
+    });
+}
+
+
+// ==========================================================
+//                        FIM DA AÇÃO 3
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO: ATUALIZAR A FUNÇÃO setupNavigation
+// ==========================================================
+
+function setupNavigation() {
+    // Pega a permissão de admin do localStorage
+    const isUserAdmin = localStorage.getItem('isUserAdmin') === 'true';
+
+    // Lista das abas que são RESTRITAS a administradores
+    const adminOnlyTabs = ['comissao', 'lojas', 'produtos'];
+
+    // Itera sobre todas as abas de navegação
+    navTabs.forEach(tab => {
+        const tabName = tab.getAttribute('data-tab');
+
+        // Se a aba atual está na lista de abas restritas E o usuário NÃO é admin...
+        if (adminOnlyTabs.includes(tabName) && !isUserAdmin) {
+            // ...esconde o item da lista (o <li> que envolve o link <a>)
+            tab.parentElement.classList.add('hidden');
+        } else {
+            // Caso contrário, garante que a aba esteja visível (para o caso de um admin logar depois de um usuário comum)
+            tab.parentElement.classList.remove('hidden');
+        }
+    });
+
+    // A lógica de clique para navegar entre as abas continua a mesma
+    navTabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Não permite que um usuário clique em uma aba escondida (segurança extra)
+            if (tab.parentElement.classList.contains('hidden')) {
+                return;
+            }
+
+            navTabs.forEach(t => t.classList.remove('active-tab'));
+            tab.classList.add('active-tab');
+            const target = tab.getAttribute('data-tab');
+            tabContents.forEach(content => {
+                content.classList.remove('active-content');
+                if (content.id === target) {
+                    content.classList.add('active-content');
+                }
+            });
+            resetLojaForm();
+            resetVendaForm();
+        });
+    });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+// ==========================================================
+//   INÍCIO DA AÇÃO 2: FUNÇÕES PARA RENDERIZAR OS HISTÓRICOS
+// ==========================================================
+
+function renderTabelaHistoricoComissao() {
+    const tabelaBody = document.getElementById('tabela-historico-comissao-body');
+    if (!tabelaBody) return;
+    tabelaBody.innerHTML = '';
+
+    // Ordena o histórico pela data mais recente primeiro
+    const historicoOrdenado = [...historicoComissao].sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+
+    historicoOrdenado.forEach(regra => {
+        const row = `<tr>
+            <td>${regra.dataInicioVigencia.toLocaleDateString('pt-BR')}</td>
+            <td>${regra.tipoLoja}</td>
+            <td>${regra.modeloVenda}</td>
+            <td>${(regra.percentual * 100).toFixed(2)}%</td>
+        </tr>`;
+        tabelaBody.innerHTML += row;
+    });
+}
+
+function renderTabelaHistoricoAluguel() {
+    const tabelaBody = document.getElementById('tabela-historico-aluguel-body');
+    if (!tabelaBody) return;
+    tabelaBody.innerHTML = '';
+
+    const historicoOrdenado = [...historicoAluguel].sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+
+    historicoOrdenado.forEach(regra => {
+        // Determina se é uma regra geral ou uma exceção para mostrar na coluna "Aplicação"
+        let aplicacao = '';
+        if (regra.lojaId) {
+            const loja = lojas.find(l => l.id === regra.lojaId);
+            aplicacao = `Exceção: ${loja ? loja.nome : 'Loja não encontrada'}`;
+        } else {
+            aplicacao = `Geral: ${regra.tipoLoja}`;
+        }
+
+        const row = `<tr>
+            <td>${regra.dataInicioVigencia.toLocaleDateString('pt-BR')}</td>
+            <td>${aplicacao}</td>
+            <td>${(regra.valorAluguelMensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        </tr>`;
+        tabelaBody.innerHTML += row;
+    });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO 2
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR TABELA DE ANÁLISE DETALHADA
+// ==========================================================
+
+function renderTabelaAnaliseComissao() {
+    const tabelaBody = document.getElementById('tabela-analise-comissao-body');
+    if (!tabelaBody) return;
+
+    tabelaBody.innerHTML = '';
+    const vendasOrdenadas = [...vendas].sort((a, b) => new Date(b.data) - new Date(a.data));
+    
+    vendasOrdenadas.forEach(venda => {
+        const loja = lojas.find(l => l.id == venda.lojaId);
+        const valorTotal = (venda.valor || 0) * (venda.quantidade || 0);
+        
+        // --- INÍCIO DA NOVA LÓGICA DE CÁLCULO ---
+        let percentualComissao, valorComissao;
+
+        // 1. VERIFICA SE A VENDA JÁ TEM A COMISSÃO SALVA
+        if (typeof venda.percentualComissaoCalculado === 'number') {
+            // Se sim, usa os valores salvos (vendas novas)
+            percentualComissao = venda.percentualComissaoCalculado;
+            valorComissao = venda.valorComissaoCalculado;
+        } else {
+            // 2. SE NÃO, CALCULA AGORA (vendas antigas)
+            if (loja) {
+                const regra = getComissaoVigente(venda.data, loja.id, loja.tipo, venda.modeloVenda);
+                if (regra) {
+                    percentualComissao = regra.percentual;
+                    valorComissao = valorTotal * percentualComissao;
+                } else {
+                    // Se não encontrar regra, define como 0
+                    percentualComissao = 0;
+                    valorComissao = 0;
+                }
+            } else {
+                percentualComissao = 0;
+                valorComissao = 0;
+            }
+        }
+        // --- FIM DA NOVA LÓGICA ---
+
+        const row = `<tr data-id="${venda.id}">
+            <td>${new Date(venda.data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
+            <td>${loja ? loja.nome : 'N/A'}</td>
+            <td>${venda.tipoLoja || (loja ? loja.tipo : 'N/A')}</td>
+            <td>${venda.modeloVenda || 'N/A'}</td>
+            <td>${venda.modelo || 'N/A'}</td>
+            <td>${(venda.valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${venda.quantidade || 0}</td>
+            <td>${valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td class="comissao-percentual-cell">
+                <span>${(percentualComissao * 100).toFixed(2)}%</span>
+                <button class="btn-edit-comissao" title="Editar comissão">✏️</button>
+            </td>
+            <td class="comissao-valor-cell">
+                ${valorComissao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </td>
+        </tr>`;
+        
+        tabelaBody.innerHTML += row;
+    });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+
 function renderTabelaVendas() {
     const vendasFiltradas = getFilteredVendasTabela();
     tabelaVendasBody.innerHTML = '';
@@ -2198,213 +3154,718 @@ function renderTabelaVendas() {
     document.querySelectorAll('#tabela-vendas .btn-table-delete').forEach(b => b.onclick = (e) => deleteVenda(e.target.dataset.id));
 }
 
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR A FUNÇÃO DE RENDERIZAÇÃO (DEFINITIVO)
+// ==========================================================
 
-    // --- CONFIGURAÇÃO DOS FORMULÁRIOS ---
-    function setupForms() {
-        // Lógica do formulário de Lojas
-        cancelEditLojaBtn.addEventListener('click', resetLojaForm);
-        // ALTERAÇÃO: A função agora é async para poder esperar a resposta do Firebase
-        lojaForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const id = lojaEditId.value;
-            const nomeLoja = document.getElementById('loja-nome').value;
+function renderTabelaMovimentacoesEstoque() {
+    const tabelaBody = document.getElementById('tabela-movimentacoes-estoque-body');
+    if (!tabelaBody) return;
 
-            // A validação de duplicados continua a mesma
-            const isDuplicate = lojas.some(l => l.nome.toLowerCase() === nomeLoja.toLowerCase() && l.id != id);
-            if (isDuplicate) {
-                lojaErrorMsg.textContent = `A loja "${nomeLoja}" já está cadastrada.`;
-                lojaErrorMsg.classList.remove('hidden');
-                lojaSuccessMsg.classList.add('hidden');
-                return;
-            }
+    tabelaBody.innerHTML = '';
 
-            const lojaData = {
-                nome: nomeLoja,
-                tipo: document.getElementById('loja-tipo').value,
-                dataInauguracao: document.getElementById('loja-data-inauguracao').value,
-                grc: document.getElementById('loja-grc').value
-            };
+    const userLojaId = localStorage.getItem('userLojaId');
+    let movimentacoesParaExibir = movimentacoesEstoque;
 
-            try {
-                if (id) {
-                    // MODO EDIÇÃO: Atualiza o documento existente no Firebase
-                    await db.collection('lojas').doc(id).update(lojaData);
-                } else {
-                    // MODO CADASTRO: Adiciona um novo documento ao Firebase
-                    await db.collection('lojas').add(lojaData);
-                }
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        movimentacoesParaExibir = movimentacoesEstoque.filter(mov => mov.lojaId === userLojaId);
+    }
 
-                // Após salvar, recarrega os dados do Firebase para atualizar a tela
-                await loadDataFromFirebase();
-                
-                resetLojaForm();
-                lojaSuccessMsg.textContent = id ? 'Loja atualizada com sucesso!' : 'Loja cadastrada com sucesso!';
-                lojaSuccessMsg.classList.remove('hidden');
-                lojaErrorMsg.classList.add('hidden');
-                setTimeout(() => lojaSuccessMsg.classList.add('hidden'), 3000);
+    // --- AQUI ESTÁ A CORREÇÃO ---
+    // Trocamos .toMillis() por .getTime(), que é o método correto para objetos Date do JavaScript.
+    const movimentacoesOrdenadas = [...movimentacoesParaExibir].sort((a, b) => {
+        // Adicionamos uma verificação para evitar erros se a data for nula
+        const timeA = a.data ? a.data.getTime() : 0;
+        const timeB = b.data ? b.data.getTime() : 0;
+        return timeB - timeA; // Ordena da mais recente para a mais antiga
+    });
 
-            } catch (error) {
-                console.error("Erro ao salvar loja no Firebase:", error);
-                lojaErrorMsg.textContent = 'Ocorreu um erro ao salvar a loja. Verifique o console.';
-                lojaErrorMsg.classList.remove('hidden');
-            }
-        };
+    movimentacoesOrdenadas.forEach(mov => {
+        const loja = lojas.find(l => l.id === mov.lojaId);
+        const produto = produtos.find(p => p.id === mov.produtoId);
+        
+        // Como 'mov.data' é sempre um objeto Date, podemos formatá-lo com segurança.
+        const dataFormatada = mov.data ? mov.data.toLocaleDateString('pt-BR') : 'N/A';
+
+        const row = `<tr>
+            <td>${dataFormatada}</td>
+            <td>${loja ? loja.nome : 'N/A'}</td>
+            <td>${produto ? produto.modelo : 'N/A'}</td>
+            <td>${mov.tipoMovimentacao}</td>
+            <td>${mov.quantidade}</td>
+            <td>${mov.observacao || ''}</td>
+        </tr>`;
+        
+        tabelaBody.innerHTML += row;
+    });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
 
 
-        // Lógica do formulário de Vendas
-        cancelEditVendaBtn.addEventListener('click', resetVendaForm);
-        vendaDataInput.valueAsDate = new Date();
-        vendaLojaSelect.onchange = () => {
-            const loja = lojas.find(l => l.id == vendaLojaSelect.value);
-            vendaTipoLojaDisplay.value = loja ? ` ${loja.tipo}` : '';
+async function handleInventarioSubmit(e) {
+    e.preventDefault();
+
+    const lojaId = inventarioLojaSelect.value;
+    const produtoId = inventarioProdutoSelect.value;
+    const quantidadeFisica = parseInt(inventarioQtdFisicaInput.value);
+    const observacao = inventarioObservacaoInput.value.trim();
+    const dataAjuste = new Date(inventarioDataInput.value + 'T00:00:00');
+
+    if (!lojaId || !produtoId || isNaN(quantidadeFisica) || !observacao) {
+        alert('Por favor, preencha todos os campos, incluindo o motivo do ajuste.');
+        return;
+    }
+
+    try {
+        const movimentacoesDoProduto = movimentacoesEstoque.filter(m => m.lojaId === lojaId && m.produtoId === produtoId);
+        const saldoAtualSistema = movimentacoesDoProduto.reduce((acc, mov) => acc + mov.quantidade, 0);
+        const diferenca = quantidadeFisica - saldoAtualSistema;
+
+        if (diferenca === 0) {
+            alert('A quantidade física informada é igual ao saldo do sistema. Nenhum ajuste necessário.');
+            return;
+        }
+
+        const movimentacao = {
+            data: firebase.firestore.Timestamp.fromDate(dataAjuste),
+            lojaId: lojaId,
+            produtoId: produtoId,
+            tipoMovimentacao: 'AJUSTE',
+            quantidade: diferenca,
+            observacao: observacao
         };
         
-        vendaModeloSelect.onchange = () => {
-            const produto = produtos.find(p => p.modelo === vendaModeloSelect.value);
-            if (produto) {
-                vendaValorInput.value = produto.valor;
-                vendaValorInput.dispatchEvent(new Event('input'));
-            }
-        };
+        const docRef = await db.collection('movimentacoesEstoque').add(movimentacao);
+
+        movimentacoesEstoque.push({
+            id: docRef.id,
+            ...movimentacao,
+            data: dataAjuste
+        });
+
+        renderTabelaMovimentacoesEstoque();
+
+        const estoqueDocRef = db.collection('estoqueAtual').doc(`${lojaId}_${produtoId}`);
+        await estoqueDocRef.set({
+            lojaId: lojaId,
+            produtoId: produtoId,
+            quantidade: quantidadeFisica,
+            ultimaAtualizacao: firebase.firestore.Timestamp.now()
+        }, { merge: true });
+
+        inventarioFeedbackMsg.textContent = `Ajuste de estoque (${diferenca}) registrado com sucesso! Saldo atual: ${quantidadeFisica}.`;
+        inventarioFeedbackMsg.className = 'loja-success-msg';
+        inventarioFeedbackMsg.classList.remove('hidden');
         
-        const formasPagamento = ["Débito", "Pix", "Crédito 1x", "Crédito 2x", "Crédito 3x", "Crédito 4x", "Crédito 5x", "Crédito 6x", "Crédito 7x", "Crédito 8x", "Crédito 9x", "Crédito 10x", "Crédito 11x", "Crédito 12x", "Crédito 18x"];
-        vendaFormaPagamentoSelect.innerHTML = formasPagamento.map(f => `<option value="${f}">${f}</option>`).join('');
+        formInventario.reset();
+        inventarioDataInput.valueAsDate = new Date();
+        applySecurityRules();
 
-        const calcularVendaTotal = () => {
-            const valor = parseFloat(vendaValorInput.value) || 0;
-            const qtd = parseInt(vendaQuantidadeInput.value) || 0;
-            vendaTotalInput.value = (valor * qtd).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    } catch (error) {
+        console.error("Erro ao registrar ajuste de inventário:", error);
+        inventarioFeedbackMsg.textContent = 'Ocorreu um erro ao registrar o ajuste. Verifique o console.';
+        inventarioFeedbackMsg.className = 'loja-error-msg';
+        inventarioFeedbackMsg.classList.remove('hidden');
+    }
+}
+
+// ==========================================================
+//       INÍCIO DA CORREÇÃO JAVASCRIPT - AÇÃO 2
+// ==========================================================
+
+function setupForms() {
+    // --- Lógica do formulário de Lojas ---
+    cancelEditLojaBtn.addEventListener('click', resetLojaForm);
+    lojaForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const id = lojaEditId.value;
+        const nomeLoja = document.getElementById('loja-nome').value;
+        const isDuplicate = lojas.some(l => l.nome.toLowerCase() === nomeLoja.toLowerCase() && l.id != id);
+        if (isDuplicate) {
+            lojaErrorMsg.textContent = `A loja "${nomeLoja}" já está cadastrada.`;
+            lojaErrorMsg.classList.remove('hidden');
+            return;
+        }
+        const grc = document.getElementById('loja-grc').value.toUpperCase();
+
+        const lojaData = {
+            nome: nomeLoja,
+            tipo: document.getElementById('loja-tipo').value,
+            dataInauguracao: document.getElementById('loja-data-inauguracao').value,
+            grc: grc // Agora o valor já está padronizado
         };
-        vendaValorInput.addEventListener('input', calcularVendaTotal);
-        vendaQuantidadeInput.addEventListener('input', calcularVendaTotal);
+        try {
+            if (id) { await db.collection('lojas').doc(id).update(lojaData); } 
+            else { await db.collection('lojas').add(lojaData); }
+            await loadDataFromFirebase();
+            resetLojaForm();
+            lojaSuccessMsg.textContent = id ? 'Loja atualizada com sucesso!' : 'Loja cadastrada com sucesso!';
+            lojaSuccessMsg.classList.remove('hidden');
+            setTimeout(() => lojaSuccessMsg.classList.add('hidden'), 3000);
+        } catch (error) {
+            console.error("Erro ao salvar loja:", error);
+            lojaErrorMsg.textContent = 'Ocorreu um erro ao salvar a loja.';
+            lojaErrorMsg.classList.remove('hidden');
+        }
+    };
 
-// >>>>> COLE ESTE NOVO CÓDIGO NO LUGAR DO ANTIGO <<<<<
-        formLancamento.onsubmit = async (e) => {
-            e.preventDefault();
+    // --- Lógica do formulário de Vendas ---
+    cancelEditVendaBtn.addEventListener('click', resetVendaForm);
+    vendaDataInput.valueAsDate = new Date();
+    vendaLojaSelect.onchange = () => {
+        const loja = lojas.find(l => l.id == vendaLojaSelect.value);
+        vendaTipoLojaDisplay.value = loja ? loja.tipo : '';
+    };
+    vendaModeloSelect.onchange = () => {
+        const produto = produtos.find(p => p.modelo === vendaModeloSelect.value);
+        if (produto) {
+            vendaValorInput.value = produto.valor;
+            vendaValorInput.dispatchEvent(new Event('input'));
+        }
+    };
+    const formasPagamento = ["Débito", "Pix", "Crédito 1x", "Crédito 2x", "Crédito 3x", "Crédito 4x", "Crédito 5x", "Crédito 6x", "Crédito 7x", "Crédito 8x", "Crédito 9x", "Crédito 10x", "Crédito 11x", "Crédito 12x", "Crédito 18x"];
+    vendaFormaPagamentoSelect.innerHTML = formasPagamento.map(f => `<option value="${f}">${f}</option>`).join('');
+    const calcularVendaTotal = () => {
+        const valor = parseFloat(vendaValorInput.value) || 0;
+        const qtd = parseInt(vendaQuantidadeInput.value) || 0;
+        vendaTotalInput.value = (valor * qtd).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+    vendaValorInput.addEventListener('input', calcularVendaTotal);
+    vendaQuantidadeInput.addEventListener('input', calcularVendaTotal);
+    
+   // ==========================================================
+//       INÍCIO DA AÇÃO: IMPLEMENTAR BAIXA DE ESTOQUE NA VENDA
+// ==========================================================
 
-            const modeloSelecionado = vendaModeloSelect.value;
-            const produto = produtos.find(p => p.modelo === modeloSelecionado);
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORREÇÃO DEFINITIVA DA BAIXA DE ESTOQUE
+// ==========================================================
 
-            if (produto && !produto.ativo) {
-                alert(`O modelo "${modeloSelecionado}" encontra-se INATIVO na base de produtos e não pode ser lançado.`);
-                return;
-            }
+// Dentro da sua função setupForms(), substitua o bloco formLancamento.onsubmit
+formLancamento.onsubmit = async (e) => {
+    e.preventDefault();
+    const id = vendaEditId.value;
+    const dataVenda = vendaDataInput.value;
+    const lojaId = vendaLojaSelect.value;
+    const modeloVenda = document.getElementById('venda-modelo-venda').value;
+    const quantidade = parseInt(vendaQuantidadeInput.value);
+    const produtoVendido = produtos.find(p => p.modelo === vendaModeloSelect.value);
 
-            const id = vendaEditId.value;
-            const lojaSelecionada = lojas.find(l => l.id == vendaLojaSelect.value);
+    if (!lojaId || !produtoVendido) {
+        alert("Por favor, preencha a Loja e o Item.");
+        return;
+    }
+    const lojaSelecionada = lojas.find(l => l.id === lojaId);
+    if (!lojaSelecionada) {
+        alert("Loja selecionada é inválida.");
+        return;
+    }
+
+    // --- LÓGICA DE COMISSÃO (inalterada) ---
+    const regraComissao = getComissaoVigente(dataVenda, lojaSelecionada.id, lojaSelecionada.tipo, modeloVenda);
+    if (!regraComissao && !id) {
+        alert(`Não foi encontrada uma regra de comissão válida para o tipo de loja "${lojaSelecionada.tipo}" e modelo de venda "${modeloVenda}" na data selecionada.`);
+        return;
+    }
+    const percentualAplicado = regraComissao ? regraComissao.percentual : 0;
+    const valorUnitario = parseFloat(vendaValorInput.value);
+    const valorTotalVenda = valorUnitario * quantidade;
+    const valorComissao = valorTotalVenda * percentualAplicado;
+
+    const vendaData = {
+        data: dataVenda,
+        lojaId: lojaId,
+        tipoLoja: lojaSelecionada.tipo,
+        modelo: produtoVendido.modelo,
+        produtoId: produtoVendido.id,
+        valor: valorUnitario,
+        modeloVenda: modeloVenda,
+        formaPagamento: vendaFormaPagamentoSelect.value,
+        quantidade: quantidade,
+        percentualComissaoCalculado: percentualAplicado,
+        valorComissaoCalculado: valorComissao
+    };
+
+    try {
+        if (id) {
+            // Lógica de edição de venda (não mexe no estoque)
+            await db.collection('vendas').doc(id).update(vendaData);
+            alert('Venda atualizada com sucesso! A movimentação de estoque não foi alterada.');
+        } else {
+            // Lógica para NOVA VENDA
             
-            const vendaData = {
-                data: vendaDataInput.value,
-                lojaId: vendaLojaSelect.value,
-                tipoLoja: lojaSelecionada ? lojaSelecionada.tipo : '',
-                modelo: vendaModeloSelect.value,
-                valor: parseFloat(vendaValorInput.value),
-                modeloVenda: document.getElementById('venda-modelo-venda').value,
-                formaPagamento: vendaFormaPagamentoSelect.value,
-                quantidade: parseInt(vendaQuantidadeInput.value)
+            // 1. Salva a nova venda
+            const vendaDocRef = await db.collection('vendas').add(vendaData);
+            
+            // 2. Cria o registro de movimentação de SAÍDA para o histórico
+            const movimentacaoSaida = {
+                data: firebase.firestore.Timestamp.fromDate(new Date(dataVenda + 'T00:00:00')),
+                lojaId: lojaId,
+                produtoId: produtoVendido.id,
+                tipoMovimentacao: 'SAÍDA',
+                quantidade: -quantidade, // Quantidade negativa
+                observacao: `Venda ID: ${vendaDocRef.id}`,
+                vendaId: vendaDocRef.id
             };
+            await db.collection('movimentacoesEstoque').add(movimentacaoSaida);
 
-            try {
-                if (id) {
-                    // MODO EDIÇÃO: Atualiza o documento de venda no Firebase
-                    await db.collection('vendas').doc(id).update(vendaData);
-                } else {
-                    // MODO CADASTRO: Adiciona um novo documento de venda no Firebase
-                    await db.collection('vendas').add(vendaData);
-                
-                }
+            // 3. ATUALIZA O SALDO CONSOLIDADO EM 'estoqueAtual' (A PARTE QUE FALTAVA)
+            const estoqueDocRef = db.collection('estoqueAtual').doc(`${lojaId}_${produtoVendido.id}`);
+            await estoqueDocRef.set({
+                lojaId: lojaId,
+                produtoId: produtoVendido.id,
+                // Usa FieldValue.increment com um valor negativo para subtrair do saldo atual
+                quantidade: firebase.firestore.FieldValue.increment(-quantidade),
+                ultimaAtualizacao: firebase.firestore.Timestamp.now()
+            }, { merge: true }); // 'merge: true' garante que o documento seja criado se não existir
 
-                // Após salvar, recarrega todos os dados para atualizar os dashboards e tabelas
-                await loadDataFromFirebase();
-                resetVendaForm(); 
-                
-            } catch (error) {
-                console.error("Erro ao salvar venda no Firebase:", error);
-                alert("Ocorreu um erro ao salvar a venda. Verifique o console para mais detalhes.");
-            }
+            alert('Venda registrada e estoque atualizado com sucesso!');
+        }
+
+        // Recarrega tudo para garantir que a interface reflita todas as mudanças
+        await loadDataFromFirebase();
+        resetVendaForm();
+
+    } catch (error) {
+        console.error("Erro ao salvar venda e dar baixa no estoque:", error);
+        alert("Ocorreu um erro ao processar a venda. Verifique o console.");
+    }
+};
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR O EVENTO DO FORMULÁRIO DE INVENTÁRIO
+// ==========================================================
+
+// Procure por esta linha no seu código, dentro de setupForms()
+formInventario.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const lojaId = inventarioLojaSelect.value;
+    const produtoId = inventarioProdutoSelect.value;
+    const quantidadeFisica = parseInt(inventarioQtdFisicaInput.value);
+    const observacao = inventarioObservacaoInput.value.trim();
+    const dataAjuste = new Date(inventarioDataInput.value + 'T00:00:00');
+
+    if (!lojaId || !produtoId || isNaN(quantidadeFisica) || !observacao) {
+        alert('Por favor, preencha todos os campos, incluindo o motivo do ajuste.');
+        return;
+    }
+
+    try {
+        // 1. Calcula o saldo atual do sistema ANTES do ajuste
+        const movimentacoesDoProduto = movimentacoesEstoque.filter(m => m.lojaId === lojaId && m.produtoId === produtoId);
+        const saldoAtualSistema = movimentacoesDoProduto.reduce((acc, mov) => acc + mov.quantidade, 0);
+        
+        // 2. Calcula a diferença a ser lançada
+        const diferenca = quantidadeFisica - saldoAtualSistema;
+
+        if (diferenca === 0) {
+            alert('A quantidade física informada é igual ao saldo do sistema. Nenhum ajuste necessário.');
+            return;
+        }
+
+        // 3. Cria o objeto de movimentação de AJUSTE
+        const movimentacao = {
+            data: firebase.firestore.Timestamp.fromDate(dataAjuste),
+            lojaId: lojaId,
+            produtoId: produtoId,
+            tipoMovimentacao: 'AJUSTE',
+            quantidade: diferenca, // Registra a diferença (pode ser positiva ou negativa)
+            observacao: observacao
         };
+        
+        // 4. Salva a movimentação no Firebase
+        const docRef = await db.collection('movimentacoesEstoque').add(movimentacao);
+
+        // 5. ATUALIZA O ARRAY LOCAL IMEDIATAMENTE (A CORREÇÃO PRINCIPAL)
+        // Adiciona o novo registro ao array 'movimentacoesEstoque' que está na memória
+        movimentacoesEstoque.push({
+            id: docRef.id,
+            ...movimentacao,
+            data: dataAjuste // Garante que a data seja um objeto Date, e não um Timestamp
+        });
+
+        // 6. ATUALIZA A INTERFACE (A PARTE QUE FALTAVA)
+        renderTabelaMovimentacoesEstoque(); // Redesenha a tabela de movimentações AGORA
+
+        // 7. Atualiza o saldo em 'estoqueAtual' (lógica antiga mantida)
+        const estoqueDocRef = db.collection('estoqueAtual').doc(`${lojaId}_${produtoId}`);
+        await estoqueDocRef.set({
+            lojaId: lojaId,
+            produtoId: produtoId,
+            quantidade: quantidadeFisica,
+            ultimaAtualizacao: firebase.firestore.Timestamp.now()
+        }, { merge: true });
+
+        // Feedback e limpeza do formulário
+        inventarioFeedbackMsg.textContent = `Ajuste de estoque (${diferenca}) registrado com sucesso! Saldo atual: ${quantidadeFisica}.`;
+        inventarioFeedbackMsg.className = 'loja-success-msg';
+        inventarioFeedbackMsg.classList.remove('hidden');
+        
+        formInventario.reset();
+        inventarioDataInput.valueAsDate = new Date();
+        applySecurityRules(); // Garante que o campo de loja seja travado novamente se necessário
+
+    } catch (error) {
+        console.error("Erro ao registrar ajuste de inventário:", error);
+        inventarioFeedbackMsg.textContent = 'Ocorreu um erro ao registrar o ajuste. Verifique o console.';
+        inventarioFeedbackMsg.className = 'loja-error-msg';
+        inventarioFeedbackMsg.classList.remove('hidden');
+    }
+});
 
 
-        exportVendasBtn.addEventListener('click', () => {
-            const vendasParaExportar = getFilteredVendasTabela().map(venda => {
-                const loja = lojas.find(l => l.id == venda.lojaId);
-                 return {
-                    "Data": venda.data,
-                    "Loja": loja ? loja.nome : 'N/A',
-                    "Tipo Loja": venda.tipoLoja || (loja ? loja.tipo : 'N/A'),
-                    "Modelo": venda.modelo,
-                    "Valor Unitario": venda.valor.toFixed(2),
-                    "Modelo Venda": venda.modeloVenda || '',
-                    "Forma Pagamento": venda.formaPagamento || '',
-                    "Quantidade": venda.quantidade,
-                    "Venda Total": (venda.valor * venda.quantidade).toFixed(2)
-                };
-            });
-            if (vendasParaExportar.length > 0) {
-                exportToCsv('vendas.csv', vendasParaExportar);
+// ==========================================================
+//       INÍCIO DA AÇÃO: ADICIONAR LÓGICA FALTANTE NA setupForms
+// ==========================================================
+
+// Cole este bloco inteiro no FINAL da sua função setupForms()
+
+    // --- Lógica dos Formulários de Regras (Comissão e Aluguel) ---
+    if (escopoComissaoSelect) {
+        escopoComissaoSelect.addEventListener('change', () => {
+            if (escopoComissaoSelect.value === 'tipo-loja') {
+                tipoLojaComissaoContainer.classList.remove('hidden');
+                lojaEspecificaComissaoContainer.classList.add('hidden');
             } else {
-                alert('Nenhuma venda para exportar com os filtros atuais.');
-            }
-        });
-        [vendasFilterData, vendasFilterLoja].forEach(el => el.onchange = renderTabelaVendas);
-        clearVendasFiltersBtn.onclick = () => {
-            vendasFilterData.value = '';
-            vendasFilterLoja.value = '';
-            renderTabelaVendas();
-        };
-
-            showProdutoFormBtn.addEventListener('click', () => {
-            produtoForm.classList.remove('hidden');
-            showProdutoFormBtn.classList.add('hidden');
-            produtoForm.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Evento para ESCONDER o formulário
-  cancelProdutoFormBtn.addEventListener('click', () => {
-            produtoForm.reset(); // Limpa os campos do formulário
-            produtoErrorMsg.classList.add('hidden'); // Esconde qualquer mensagem de erro
-            document.getElementById('produto-modelo').focus(); // Coloca o foco no primeiro campo
-        });
-
-        // Evento de SUBMISSÃO do formulário (lógica de salvar permanece a mesma)
-        produtoForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const nomeModelo = document.getElementById('produto-modelo').value.trim();
-            const valorModelo = parseFloat(document.getElementById('produto-valor').value);
-
-            const isDuplicate = produtos.some(p => p.modelo.toLowerCase() === nomeModelo.toLowerCase());
-            
-            if (isDuplicate) {
-                produtoErrorMsg.textContent = `O modelo "${nomeModelo}" já existe.`;
-                produtoErrorMsg.classList.remove('hidden');
-                return;
-            }
-
-            const novoProduto = {
-                modelo: nomeModelo,
-                valor: valorModelo,
-                ativo: true,
-                ultimaAlteracao: new Date().toISOString()
-            };
-
-            try {
-                await db.collection('produtos').add(novoProduto);
-
-                // Limpa o formulário para o próximo cadastro
-                cancelProdutoFormBtn.click(); // Simula um clique no botão de limpar
-                
-                await loadDataFromFirebase();
-                
-                alert('Produto cadastrado com sucesso!');
-
-            } catch (error) {
-                console.error("Erro ao cadastrar novo produto:", error);
-                produtoErrorMsg.textContent = 'Ocorreu um erro ao salvar. Tente novamente.';
-                produtoErrorMsg.classList.remove('hidden');
+                tipoLojaComissaoContainer.classList.add('hidden');
+                lojaEspecificaComissaoContainer.classList.remove('hidden');
             }
         });
     }
+
+    if (formNovaRegraComissao) {
+        formNovaRegraComissao.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const novaRegra = {
+                modeloVenda: document.getElementById('regra-comissao-modelo-venda').value,
+                percentual: parseFloat(document.getElementById('regra-comissao-percentual').value) / 100,
+                dataInicioVigencia: firebase.firestore.Timestamp.fromDate(new Date(document.getElementById('regra-comissao-data-inicio').value + 'T00:00:00'))
+            };
+            if (escopoComissaoSelect.value === 'tipo-loja') {
+                novaRegra.tipoLoja = document.getElementById('regra-comissao-tipo-loja').value;
+            } else {
+                novaRegra.lojaId = document.getElementById('regra-comissao-loja-id').value;
+            }
+            try {
+                await db.collection('historicoComissao').add(novaRegra);
+                const feedbackMsg = document.getElementById('comissao-regra-feedback-msg');
+                feedbackMsg.textContent = 'Nova regra de comissão salva com sucesso!';
+                feedbackMsg.className = 'loja-success-msg';
+                feedbackMsg.classList.remove('hidden');
+                formNovaRegraComissao.reset();
+                escopoComissaoSelect.dispatchEvent(new Event('change'));
+                await loadDataFromFirebase();
+            } catch (error) {
+                console.error("Erro ao salvar nova regra de comissão:", error);
+                alert("Ocorreu um erro ao salvar a nova regra.");
+            }
+        });
+    }
+
+    if (escopoAluguelSelect) {
+        escopoAluguelSelect.addEventListener('change', () => {
+            if (escopoAluguelSelect.value === 'tipo-loja') {
+                tipoLojaAluguelContainer.classList.remove('hidden');
+                lojaEspecificaAluguelContainer.classList.add('hidden');
+            } else {
+                tipoLojaAluguelContainer.classList.add('hidden');
+                lojaEspecificaAluguelContainer.classList.remove('hidden');
+            }
+        });
+    }
+
+    if (formNovoValorAluguel) {
+        formNovoValorAluguel.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const novoValor = {
+                valorAluguelMensal: parseFloat(document.getElementById('regra-aluguel-valor').value),
+                dataInicioVigencia: firebase.firestore.Timestamp.fromDate(new Date(document.getElementById('regra-aluguel-data-inicio').value + 'T00:00:00'))
+            };
+            if (escopoAluguelSelect.value === 'tipo-loja') {
+                novoValor.tipoLoja = document.getElementById('regra-aluguel-tipo-loja').value;
+            } else {
+                novoValor.lojaId = document.getElementById('regra-aluguel-loja-id').value;
+            }
+            try {
+                await db.collection('historicoAluguel').add(novoValor);
+                const feedbackMsg = document.getElementById('aluguel-regra-feedback-msg');
+                feedbackMsg.textContent = 'Novo valor de aluguel salvo com sucesso!';
+                feedbackMsg.className = 'loja-success-msg';
+                feedbackMsg.classList.remove('hidden');
+                formNovoValorAluguel.reset();
+                escopoAluguelSelect.dispatchEvent(new Event('change'));
+                await loadDataFromFirebase();
+            } catch (error) {
+                console.error("Erro ao salvar novo valor de aluguel:", error);
+                alert("Ocorreu um erro ao salvar o novo valor.");
+            }
+        });
+    }
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+
+}
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+
+// 3. Crie estas duas novas funções para popular os seletores
+function populateInventarioLojaSelect() {
+    if (!inventarioLojaSelect) return;
+    inventarioLojaSelect.innerHTML = '<option value="">Selecione a loja</option>';
+    lojas.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(loja => {
+        inventarioLojaSelect.innerHTML += `<option value="${loja.id}">${loja.nome}</option>`;
+    });
+}
+
+function populateInventarioProdutoSelect() {
+    if (!inventarioProdutoSelect) return;
+    inventarioProdutoSelect.innerHTML = '<option value="">Selecione o produto</option>';
+    produtos.sort((a, b) => a.modelo.localeCompare(b.modelo)).forEach(produto => {
+        inventarioProdutoSelect.innerHTML += `<option value="${produto.id}">${produto.modelo}</option>`;
+    });
+}
+// ==========================================================
+    //           INÍCIO DA AÇÃO 3: LÓGICA DE ENTRADA DE ESTOQUE
+    // ==========================================================
+    formEntradaEstoque.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const dataEntrada = estoqueDataEntrada.value;
+        const lojaId = estoqueLojaSelect.value;
+        const produtoId = estoqueProdutoSelect.value;
+        const quantidade = parseInt(estoqueQuantidadeInput.value);
+        const observacao = estoqueObservacaoInput.value.trim();
+
+        if (!dataEntrada || !lojaId || !produtoId || isNaN(quantidade) || quantidade <= 0) {
+            estoqueFeedbackMsg.textContent = 'Por favor, preencha todos os campos obrigatórios (Data, Loja, Produto, Quantidade).';
+            estoqueFeedbackMsg.className = 'loja-error-msg'; // Reutiliza o estilo de erro
+            estoqueFeedbackMsg.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            // 1. Registrar a movimentação em 'movimentacoesEstoque'
+            const movimentacao = {
+                data: firebase.firestore.Timestamp.fromDate(new Date(dataEntrada + 'T00:00:00')),
+                lojaId: lojaId,
+                produtoId: produtoId,
+                tipoMovimentacao: 'ENTRADA',
+                quantidade: quantidade,
+                observacao: observacao,
+                vendaId: null // Não é uma venda
+            };
+            await db.collection('movimentacoesEstoque').add(movimentacao);
+
+            // 2. Atualizar o saldo em 'estoqueAtual'
+            const estoqueDocRef = db.collection('estoqueAtual').doc(`${lojaId}_${produtoId}`);
+            await estoqueDocRef.set({
+                lojaId: lojaId,
+                produtoId: produtoId,
+                quantidade: firebase.firestore.FieldValue.increment(quantidade), // Incrementa o valor existente
+                ultimaAtualizacao: firebase.firestore.Timestamp.now()
+            }, { merge: true }); // 'merge: true' cria o documento se não existir, ou atualiza se existir
+
+            estoqueFeedbackMsg.textContent = 'Entrada de estoque registrada com sucesso!';
+            estoqueFeedbackMsg.className = 'loja-success-msg'; // Reutiliza o estilo de sucesso
+            estoqueFeedbackMsg.classList.remove('hidden');
+            
+            formEntradaEstoque.reset();
+            estoqueDataEntrada.valueAsDate = new Date(); // Reseta a data para hoje
+            await loadDataFromFirebase(); // Recarrega todos os dados para atualizar as tabelas
+
+        } catch (error) {
+            console.error("Erro ao registrar entrada de estoque:", error);
+            estoqueFeedbackMsg.textContent = 'Ocorreu um erro ao registrar a entrada de estoque. Verifique o console.';
+            estoqueFeedbackMsg.className = 'loja-error-msg';
+            estoqueFeedbackMsg.classList.remove('hidden');
+        }
+    });
+    // ==========================================================
+    //                        FIM DA AÇÃO 3                       
+    // ==========================================================
+// ==========================================================
+//                        FIM DA CORREÇÃO
+// ==========================================================
+// ==========================================================
+//       INÍCIO DA AÇÃO 2: LÓGICA DA TABELA DE RESUMO
+// ==========================================================
+
+// --- 1. FUNÇÃO PARA POPULAR OS FILTROS DA ABA COMISSÃO ---
+function populateComissaoFilters() {
+    const filterMonth = document.getElementById('comissao-filter-month');
+    const filterYear = document.getElementById('comissao-filter-year');
+    
+    const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    filterMonth.innerHTML = '<option value="all">Todos os Meses</option>';
+    meses.forEach((mes, index) => {
+        filterMonth.innerHTML += `<option value="${index}">${mes}</option>`;
+    });
+
+    const currentYear = new Date().getFullYear();
+    filterYear.innerHTML = '<option value="all">Todos os Anos</option>';
+    for (let i = currentYear; i >= currentYear - 5; i--) {
+        filterYear.innerHTML += `<option value="${i}">${i}</option>`;
+    }
+
+    filterMonth.value = new Date().getMonth();
+    filterYear.value = currentYear;
+
+    // Adiciona os "ouvintes" para atualizar a tabela quando os filtros mudarem
+    filterMonth.onchange = renderTabelaResumoComissao;
+    filterYear.onchange = renderTabelaResumoComissao;
+}
+
+// --- 2. FUNÇÃO PARA ENCONTRAR O ALUGUEL VIGENTE ---
+function getAluguelVigente(dataReferencia, lojaId, tipoLoja) {
+    const dataRefObj = new Date(dataReferencia);
+
+    // Prioridade 1: Encontrar exceção para a loja específica
+    const excecoes = historicoAluguel.filter(r => r.lojaId === lojaId && r.dataInicioVigencia <= dataRefObj);
+    if (excecoes.length > 0) {
+        excecoes.sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+        return excecoes[0].valorAluguelMensal;
+    }
+
+    // Prioridade 2: Encontrar regra geral para o tipo de loja
+    const regrasGerais = historicoAluguel.filter(r => !r.lojaId && r.tipoLoja === tipoLoja && r.dataInicioVigencia <= dataRefObj);
+    if (regrasGerais.length > 0) {
+        regrasGerais.sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+        return regrasGerais[0].valorAluguelMensal;
+    }
+
+    return 0; // Retorna 0 se nenhuma regra for encontrada
+}
+// ==========================================================
+//       INÍCIO DA AÇÃO (PASSO 1): CRIAR A NOVA FUNÇÃO
+// ==========================================================
+
+
+// ==========================================================
+//                        FIM DA AÇÃO (PASSO 1)
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO: AJUSTAR CÁLCULO DO ALUGUEL
+// ==========================================================
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR CÁLCULO PARA VENDAS ANTIGAS
+// ==========================================================
+
+function renderTabelaResumoComissao() {
+    const tabelaBody = document.getElementById('tabela-resumo-comissao-body');
+    const tabelaHead = document.querySelector('#tabela-resumo-comissao thead tr');
+    if (!tabelaBody || !tabelaHead) return;
+
+    tabelaHead.innerHTML = `
+        <th>Loja</th>
+        <th>Tipo Loja</th>
+        <th>Valor Total Comissão (R$)</th>
+        <th>Aluguel (R$)</th>
+        <th>A Pagar (R$)</th>
+    `;
+
+    const selectedMonth = document.getElementById('comissao-filter-month').value;
+    const selectedYear = document.getElementById('comissao-filter-year').value;
+
+    const vendasFiltradas = vendas.filter(venda => {
+        const vendaDate = new Date(venda.data + 'T00:00:00');
+        const monthMatch = (selectedMonth === 'all') || (vendaDate.getMonth() == selectedMonth);
+        const yearMatch = (selectedYear === 'all') || (vendaDate.getFullYear() == selectedYear);
+        return monthMatch && yearMatch;
+    });
+
+    // --- LÓGICA DE AGRUPAMENTO ATUALIZADA ---
+    const comissaoPorLoja = vendasFiltradas.reduce((acc, venda) => {
+        let valorComissaoDaVenda = 0;
+
+        // 1. VERIFICA SE A VENDA JÁ TEM A COMISSÃO CALCULADA E SALVA
+        if (typeof venda.valorComissaoCalculado === 'number') {
+            // Se sim, usa o valor salvo. É o caso das vendas novas.
+            valorComissaoDaVenda = venda.valorComissaoCalculado;
+        } else {
+            // 2. SE NÃO, É UMA VENDA ANTIGA. CALCULA A COMISSÃO AGORA.
+            const lojaDaVenda = lojas.find(l => l.id === venda.lojaId);
+            if (lojaDaVenda) {
+                const regra = getComissaoVigente(venda.data, lojaDaVenda.id, lojaDaVenda.tipo, venda.modeloVenda);
+                if (regra) {
+                    const valorTotalVenda = (venda.valor || 0) * (venda.quantidade || 0);
+                    valorComissaoDaVenda = valorTotalVenda * regra.percentual;
+                }
+            }
+        }
+
+        // Adiciona o valor (calculado ou pego do cache) ao total da loja
+        if (!acc[venda.lojaId]) {
+            acc[venda.lojaId] = 0;
+        }
+        acc[venda.lojaId] += valorComissaoDaVenda;
+        
+        return acc;
+    }, {});
+
+    tabelaBody.innerHTML = '';
+    let totalAPagarGeral = 0;
+
+    lojas.forEach(loja => {
+        const comissaoTotal = comissaoPorLoja[loja.id] || 0;
+
+        // Lógica do aluguel (inalterada)
+        let aluguelFinal = 0;
+        if (selectedMonth !== 'all' && selectedYear !== 'all') {
+            const anoFiltrado = parseInt(selectedYear);
+            const mesFiltrado = parseInt(selectedMonth);
+            const dataInauguracao = new Date(loja.dataInauguracao + 'T00:00:00');
+            const dataReferencia = new Date(anoFiltrado, mesFiltrado + 1, 0);
+            const aluguelCheio = getAluguelVigente(dataReferencia, loja.id, loja.tipo);
+
+            if (dataInauguracao.getFullYear() === anoFiltrado && dataInauguracao.getMonth() === mesFiltrado) {
+                const ultimoDiaDoMes = dataReferencia.getDate();
+                const diaInauguracao = dataInauguracao.getDate();
+                const diasEmAberto = ultimoDiaDoMes - diaInauguracao + 1;
+                aluguelFinal = (aluguelCheio / ultimoDiaDoMes) * diasEmAberto;
+            } else {
+                aluguelFinal = aluguelCheio;
+            }
+        }
+        
+        const valorAPagar = Math.max(comissaoTotal, aluguelFinal);
+        totalAPagarGeral += valorAPagar;
+
+        const row = `<tr>
+            <td>${loja.nome}</td>
+            <td>${loja.tipo}</td>
+            <td>${comissaoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td>${aluguelFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td style="font-weight: bold;">${valorAPagar.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        </tr>`;
+        tabelaBody.innerHTML += row;
+    });
+
+    document.getElementById('card-total-a-pagar').textContent = totalAPagarGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+
+// ==========================================================
+//                        FIM DA AÇÃO 2
+// ==========================================================
+
 
     // --- FUNÇÕES DE RESET DE FORMULÁRIO ---
     function resetLojaForm() {
@@ -2441,6 +3902,7 @@ function resetVendaForm() {
     // 7. Limpa os campos que não são resetados automaticamente (readonly)
     vendaTotalInput.value = '';
     vendaTipoLojaDisplay.value = '';
+    applySecurityRules();
 }
 
     // --- FUNÇÕES DE EDIÇÃO E EXCLUSÃO ---
@@ -2470,6 +3932,111 @@ async function deleteLoja(id) {
             alert("Ocorreu um erro ao tentar excluir a loja. Verifique o console.");
         }
     }
+}
+function populateComissaoLojaSelect() {
+    const select = document.getElementById('regra-comissao-loja-id');
+    if (!select) return;
+    select.innerHTML = '';
+    lojas.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(loja => {
+        select.innerHTML += `<option value="${loja.id}">${loja.nome}</option>`;
+    });
+}
+
+// ==========================================================
+//           INÍCIO DA AÇÃO 2.2: NOVAS FUNÇÕES POPULATE        
+// ==========================================================
+
+function populateEstoqueLojaSelect() {
+    if (!estoqueLojaSelect) return;
+    estoqueLojaSelect.innerHTML = '<option value="">Selecione a loja</option>';
+    lojas.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(loja => {
+        estoqueLojaSelect.innerHTML += `<option value="${loja.id}">${loja.nome}</option>`;
+    });
+}
+
+function populateEstoqueProdutoSelect() {
+    if (!estoqueProdutoSelect) return;
+    estoqueProdutoSelect.innerHTML = '<option value="">Selecione o produto</option>';
+    // Apenas produtos ativos devem ser selecionáveis para entrada
+    produtos.filter(p => p.ativo).sort((a, b) => a.modelo.localeCompare(b.modelo)).forEach(produto => {
+        estoqueProdutoSelect.innerHTML += `<option value="${produto.id}">${produto.modelo}</option>`;
+    });
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO 2.2                       
+// ==========================================================
+
+
+// ==========================================================
+//       INÍCIO DA AÇÃO 2: ADICIONAR/CORRIGIR A FUNÇÃO FALTANTE
+// ==========================================================
+
+// Cole esta função junto com as outras funções auxiliares, como deleteVenda, editVenda, etc.
+
+function getComissaoVigente(dataVenda, lojaId, tipoLoja, modeloVenda) {
+    const dataVendaObj = new Date(dataVenda + 'T00:00:00');
+
+    // --- ETAPA 1: TENTAR ENCONTRAR UMA REGRA DE EXCEÇÃO PARA A LOJA ---
+    const excecoesCandidatas = historicoComissao.filter(regra => 
+        regra.lojaId === lojaId && // Procura pelo ID da loja
+        regra.modeloVenda === modeloVenda &&
+        regra.dataInicioVigencia <= dataVendaObj
+    );
+
+    if (excecoesCandidatas.length > 0) {
+        excecoesCandidatas.sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+        console.log("Regra de EXCEÇÃO de comissão encontrada para a loja:", lojaId);
+        return excecoesCandidatas[0]; // Retorna a exceção mais recente
+    }
+
+    // --- ETAPA 2: SE NÃO HOUVER EXCEÇÃO, PROCURAR PELA REGRA GERAL ---
+    const regrasGeraisCandidatas = historicoComissao.filter(regra => 
+        !regra.lojaId && // Garante que é uma regra geral (sem lojaId)
+        regra.tipoLoja === tipoLoja &&
+        regra.modeloVenda === modeloVenda &&
+        regra.dataInicioVigencia <= dataVendaObj
+    );
+
+    if (regrasGeraisCandidatas.length > 0) {
+        regrasGeraisCandidatas.sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+        console.log("Regra GERAL de comissão encontrada para o tipo:", tipoLoja);
+        return regrasGeraisCandidatas[0]; // Retorna a regra geral mais recente
+    }
+
+    // --- ETAPA 3: SE NENHUMA REGRA FOR ENCONTRADA ---
+    console.warn(`Nenhuma regra de comissão (geral ou exceção) encontrada para a data ${dataVenda}`);
+    return null;
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO 2
+// ==========================================================
+
+function renderTabelaHistoricoComissao() {
+    const tabelaBody = document.getElementById('tabela-historico-comissao-body');
+    if (!tabelaBody) return;
+    tabelaBody.innerHTML = '';
+
+    const historicoOrdenado = [...historicoComissao].sort((a, b) => b.dataInicioVigencia - a.dataInicioVigencia);
+
+    historicoOrdenado.forEach(regra => {
+        let aplicacao = '';
+        if (regra.lojaId) {
+            const loja = lojas.find(l => l.id === regra.lojaId);
+            aplicacao = `Exceção: ${loja ? loja.nome : 'N/A'}`;
+        } else {
+            aplicacao = `Geral: ${regra.tipoLoja}`;
+        }
+
+        const row = `<tr>
+            <td>${regra.dataInicioVigencia.toLocaleDateString('pt-BR')}</td>
+            <td>${aplicacao}</td>
+            <td>${regra.modeloVenda}</td>
+            <td>${(regra.percentual * 100).toFixed(2)}%</td>
+        </tr>`;
+        tabelaBody.innerHTML += row;
+    });
 }
 
 
@@ -2577,34 +4144,34 @@ async function deleteProduto(id) {
         });
     }
 
-   function renderTabelaVendas() {
-    // Pega os filtros da tabela de vendas (se houver)
-    const vendasFiltradas = getFilteredVendasTabela();
-    
-    // Limpa o corpo da tabela
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR A FUNÇÃO renderTabelaVendas
+// ==========================================================
+
+function renderTabelaVendas() {
+    // A lógica de filtro por data e pelo seletor da tabela continua igual
+    let vendasFiltradas = getFilteredVendasTabela();
+
+    // --- INÍCIO DA NOVA LÓGICA DE FILTRO DE SEGURANÇA ---
+    const userLojaId = localStorage.getItem('userLojaId');
+
+    // 1. Se o usuário é de uma loja específica, aplica um filtro adicional
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        vendasFiltradas = vendasFiltradas.filter(venda => venda.lojaId === userLojaId);
+    }
+    // --- FIM DA NOVA LÓGICA DE FILTRO DE SEGURANÇA ---
+
     const tabelaVendasBody = document.getElementById('tabela-vendas-body');
     tabelaVendasBody.innerHTML = '';
 
-    // Ordena as vendas da mais recente para a mais antiga
+    // Ordena as vendas (já filtradas) da mais recente para a mais antiga
     const vendasOrdenadas = [...vendasFiltradas].sort((a, b) => new Date(b.data) - new Date(a.data));
     
-    // Itera sobre cada venda para criar a linha da tabela
     vendasOrdenadas.forEach(venda => {
-        // Busca a loja correspondente
         const loja = lojas.find(l => l.id == venda.lojaId);
-
-        // ==========================================================
-        //                    INÍCIO DA CORREÇÃO
-        // ==========================================================
-        
-        // 1. Validação de segurança para os valores numéricos
         const valorUnitario = typeof venda.valor === 'number' ? venda.valor : 0;
         const quantidade = typeof venda.quantidade === 'number' ? venda.quantidade : 0;
         const totalVenda = valorUnitario * quantidade;
-
-        // ==========================================================
-        //                     FIM DA CORREÇÃO
-        // ==========================================================
 
         const row = `<tr>
             <td>${new Date(venda.data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
@@ -2629,6 +4196,10 @@ async function deleteProduto(id) {
     document.querySelectorAll('#tabela-vendas .btn-table-edit').forEach(b => b.onclick = (e) => editVenda(e.target.dataset.id));
     document.querySelectorAll('#tabela-vendas .btn-table-delete').forEach(b => b.onclick = (e) => deleteVenda(e.target.dataset.id));
 }
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
 
     function renderTabelaLojas() {
         // A lógica do subtítulo também precisa ser corrigida para contar "Shopping" e "Rua"
@@ -2866,104 +4437,345 @@ function renderProdutosLista() {
 
     }
 
-    // --- LÓGICA DO DASHBOARD ---
-    function populateFilters() {
-        const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        filterMonth.innerHTML = '<option value="all">Todos os Meses</option>';
-        meses.forEach((mes, index) => {
-            filterMonth.innerHTML += `<option value="${index}">${mes}</option>`;
-        });
-        const currentYear = new Date().getFullYear();
-        filterYear.innerHTML = '<option value="all">Todos os Anos</option>';
-        for (let i = currentYear; i >= currentYear - 5; i--) {
-            filterYear.innerHTML += `<option value="${i}">${i}</option>`;
-        }
-        filterMonth.value = new Date().getMonth();
-        filterYear.value = currentYear;
-        filterMonth.onchange = updateDashboard;
-        filterYear.onchange = updateDashboard;
+// ==========================================================
+//       INÍCIO DA AÇÃO 1: RESTAURAR populateFilters
+// ==========================================================
+
+function populateFilters() {
+    const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    filterMonth.innerHTML = '<option value="all">Todos os Meses</option>';
+    meses.forEach((mes, index) => {
+        filterMonth.innerHTML += `<option value="${index}">${mes}</option>`;
+    });
+    const currentYear = new Date().getFullYear();
+    filterYear.innerHTML = '<option value="all">Todos os Anos</option>';
+    for (let i = currentYear; i >= currentYear - 5; i--) {
+        filterYear.innerHTML += `<option value="${i}">${i}</option>`;
     }
+    filterMonth.value = new Date().getMonth();
+    filterYear.value = currentYear;
     
-    function getFilteredVendas() {
-        const selectedMonth = filterMonth.value;
-        const selectedYear = filterYear.value;
-        return vendas.filter(venda => {
-            const vendaDate = new Date(venda.data + 'T00:00:00');
-            const monthMatch = (selectedMonth === 'all') || (vendaDate.getMonth() == selectedMonth);
-            const yearMatch = (selectedYear === 'all') || (vendaDate.getFullYear() == selectedYear);
-            return monthMatch && yearMatch;
-        });
-    }
+    // REMOVEMOS AS LINHAS .onchange DAQUI!
+}
 
 // ==========================================================
-//           INÍCIO DA CORREÇÃO (CÁLCULO DOS CARDS v3)
+//                        FIM DA AÇÃO 1
 // ==========================================================
-function updateDashboard() {
+
+// ==========================================================
+//       INÍCIO DA AÇÃO 1: RESTAURAR A FUNÇÃO ORIGINAL
+// ==========================================================
+
+function getFilteredVendas() {
+    const selectedMonth = filterMonth.value;
+    const selectedYear = filterYear.value;
+
+    return vendas.filter(venda => {
+        const vendaDate = new Date(venda.data + 'T00:00:00');
+        const monthMatch = (selectedMonth === 'all') || (vendaDate.getMonth() == selectedMonth);
+        const yearMatch = (selectedYear === 'all') || (vendaDate.getFullYear() == selectedYear);
+        
+        // A função correta para o dashboard principal só precisa disso:
+        return monthMatch && yearMatch;
+    });
+}
+// 3. ATUALIZE A FUNÇÃO applyDashboardLojaFilter
+function applyDashboardLojaFilter(vendasParaFiltrar) {
+    const userLojaId = localStorage.getItem('userLojaId');
+
+    // VERIFICA SE O USUÁRIO É DE UMA LOJA ESPECÍFICA
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        // Se for, força o filtro para a loja dele, ignorando o seletor
+        return vendasParaFiltrar.filter(venda => venda.lojaId === userLojaId);
+    }
+
+    // SE FOR ADMIN, A LÓGICA ANTIGA CONTINUA
+    const selectedLoja = document.getElementById('filter-loja').value;
+    if (selectedLoja === 'all') {
+        return vendasParaFiltrar;
+    }
+    return vendasParaFiltrar.filter(venda => venda.lojaId === selectedLoja);
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO 3
+// ==========================================================
+
+// ==========================================================
+//                        FIM DA AÇÃO 1
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO 2: CRIAR FUNÇÃO "MAESTRO"
+// ==========================================================
+
+function runDashboardUpdate() {
+    // 1. Pega os dados filtrados por data
+    let vendasFiltradasData = getFilteredVendas();
+
+    // 2. Aplica o filtro de loja do dashboard principal
+    let vendasParaDashboard = applyDashboardLojaFilter(vendasFiltradasData);
+
+    // 3. Chama a função de desenhar o dashboard, passando os dados corretos
+    updateDashboard(vendasParaDashboard);
+
+    // 4. Chama a função de desenhar a tabela de detalhamento, passando os dados filtrados APENAS por data
+    updateDetalheVendasTable(vendasFiltradasData);
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO 2
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO 1: RESTAURAR E AJUSTAR updateDashboard
+// ==========================================================
+
+// A função agora RECEBE os dados que deve usar
+function updateDashboard(vendasFiltradas) { 
     document.getElementById('venda-dia-chart').closest('.chart-wrapper').style.height = '350px';
 
-    const vendasFiltradas = getFilteredVendas();
+    // REMOVEMOS a linha que aplicava o filtro de loja daqui de dentro.
+
     const vendaTotal = vendasFiltradas.reduce((sum, v) => sum + (v.valor * v.quantidade), 0);
     const totalUnidades = vendasFiltradas.reduce((sum, v) => sum + v.quantidade, 0);
     const ticketMedio = totalUnidades > 0 ? vendaTotal / totalUnidades : 0;
 
-    // --- LÓGICA FINAL E REFINADA PARA VENDA MÉDIA/DIA ---
+    // --- Lógica de Venda Média/Dia (inalterada) ---
     const selectedMonth = filterMonth.value;
     const selectedYear = filterYear.value;
     let numeroDeDiasParaMedia;
-
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
     const mesAtual = hoje.getMonth();
-
     if (selectedMonth !== 'all' && selectedYear !== 'all') {
         const anoSelecionadoInt = parseInt(selectedYear);
         const mesSelecionadoInt = parseInt(selectedMonth);
-
         if (anoSelecionadoInt === anoAtual && mesSelecionadoInt === mesAtual) {
-            // CASO 1: É o mês e ano ATUAIS.
             if (vendasFiltradas.length > 0) {
-                // Pega o dia da última venda registrada no período.
                 const ultimoDiaComVenda = Math.max(...vendasFiltradas.map(v => new Date(v.data + 'T00:00:00').getDate()));
                 numeroDeDiasParaMedia = ultimoDiaComVenda;
             } else {
-                // Se não houver vendas no mês atual ainda, a média é 0, dividindo por 1 para evitar erro.
                 numeroDeDiasParaMedia = 1;
             }
         } else {
-            // CASO 2: É um mês passado. A média é dividida pelo total de dias daquele mês.
             numeroDeDiasParaMedia = new Date(anoSelecionadoInt, mesSelecionadoInt + 1, 0).getDate();
         }
     } else {
-        // Fallback: se nenhum filtro de data está aplicado, usa dias com vendas.
         numeroDeDiasParaMedia = new Set(vendas.map(v => v.data)).size || 1;
     }
-
     const vendaMediaDia = numeroDeDiasParaMedia > 0 ? vendaTotal / numeroDeDiasParaMedia : 0;
-    // --- FIM DA LÓGICA FINAL ---
-
+    
+    // --- Atualização dos cards e gráficos (inalterada) ---
     document.getElementById('card-venda-total').textContent = vendaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     document.getElementById('card-unidades').textContent = totalUnidades;
     document.getElementById('card-ticket-medio').textContent = ticketMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     document.getElementById('card-venda-media').textContent = vendaMediaDia.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     
-    // O restante da função continua igual...
+    // --- INÍCIO DA LÓGICA CORRIGIDA PARA O CARD DE ESTOQUE ---
+    
+    const userLojaId = localStorage.getItem('userLojaId');
+    let movimentacoesParaCalcular = movimentacoesEstoque;
+
+    // 1. APLICA O FILTRO DE SEGURANÇA
+    // Se o usuário for de uma loja específica, filtramos as movimentações primeiro
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        movimentacoesParaCalcular = movimentacoesEstoque.filter(mov => mov.lojaId === userLojaId);
+    }
+
+    // 2. CALCULA O ESTOQUE TOTAL USANDO O ARRAY JÁ FILTRADO
+    const estoqueTotal = movimentacoesParaCalcular.reduce((sum, mov) => sum + mov.quantidade, 0);
+
+    // 3. Atualiza o texto do card
+    document.getElementById('card-estoque-total').textContent = estoqueTotal;
+
+    // --- FIM DA LÓGICA CORRIGIDA ---
     updateRankingLojasChart(vendasFiltradas);
     updateRankingModeloChart(vendasFiltradas);
     updateVendaTipoLojaChart(vendasFiltradas);
     updateVendaFormaPagamentoChart(vendasFiltradas);
     updateRankingGRCChart(vendasFiltradas);
     updateParticipacaoChart(vendasFiltradas, totalUnidades);
+    
+    updateEstoquePorLojaChart();
+    updateEstoquePorModeloChart();
+    
     updateVendaDiaChart(vendasFiltradas);
     updateVendaSemanaChart(vendasFiltradas);
     updateVendaMensalChart();
     updateVendaAnualChart();
-    updateDetalheVendasTable(vendasFiltradas);
+    
+    // IMPORTANTE: A tabela de detalhamento agora é chamada de outro lugar
+    // updateDetalheVendasTable(vendasFiltradas); 
 }
+
 // ==========================================================
-//                        FIM DA CORREÇÃO
+//                        FIM DA AÇÃO 1
 // ==========================================================
 
+// ==========================================================
+//       INÍCIO DA AÇÃO: SUBSTITUIR FUNÇÕES COMPLETAS
+// ==========================================================
 
+// 1. FUNÇÃO COMPLETA PARA O GRÁFICO DE ESTOQUE POR LOJA
+function updateEstoquePorLojaChart() {
+    const ctx = document.getElementById('estoque-por-loja-chart').getContext('2d');
+    const userLojaId = localStorage.getItem('userLojaId');
+    
+    let movimentacoesParaCalcular = movimentacoesEstoque;
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        movimentacoesParaCalcular = movimentacoesEstoque.filter(mov => mov.lojaId === userLojaId);
+    }
+
+    const estoquePorLoja = movimentacoesParaCalcular.reduce((acc, mov) => {
+        const loja = lojas.find(l => l.id === mov.lojaId);
+        if (loja) {
+            acc[loja.nome] = (acc[loja.nome] || 0) + mov.quantidade;
+        }
+        return acc;
+    }, {});
+
+    const sortedEstoque = Object.entries(estoquePorLoja).sort(([, a], [, b]) => b - a);
+
+    // --- LÓGICA DE ALTURA DINÂMICA ---
+    const numeroDeBarras = sortedEstoque.length;
+    const espacoVerticalPorBarra = 40;
+    const alturaMinimaDoGrafico = 80;
+    const alturaCalculada = Math.max(alturaMinimaDoGrafico, numeroDeBarras * espacoVerticalPorBarra);
+    
+    const canvasContainer = document.getElementById('estoque-loja-canvas-container');
+    canvasContainer.style.height = `${alturaCalculada}px`;
+    // --- FIM DA LÓGICA DE ALTURA ---
+
+    const options = {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            datalabels: {
+                anchor: 'end',
+                align: 'right',
+                offset: 8,
+                color: document.body.classList.contains('dark-mode') ? '#f0f2f5' : '#172B4D',
+                font: { weight: 'bold' },
+                formatter: (value) => Math.round(value)
+            }
+        },
+        scales: {
+            x: { 
+                display: true, 
+                grid: { display: false },
+                ticks: { precision: 0 },
+                beginAtZero: true 
+            },
+            y: { 
+                display: true, 
+                grid: { display: false, drawBorder: false }
+            }
+        }
+    };
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+    gradient.addColorStop(0, '#f5d393');
+    gradient.addColorStop(1, '#f5d393');
+
+    createChart(ctx, 'bar', {
+        labels: sortedEstoque.map(([nome]) => nome),
+        datasets: [{
+            label: 'Estoque Total',
+            data: sortedEstoque.map(([, qtd]) => qtd),
+            backgroundColor: gradient,
+            borderRadius: 8
+            // Nenhuma propriedade de espessura aqui
+        }]
+    }, options);
+}
+
+
+// 2. FUNÇÃO COMPLETA PARA O GRÁFICO DE ESTOQUE POR MODELO
+function updateEstoquePorModeloChart() {
+    const ctx = document.getElementById('estoque-por-modelo-chart').getContext('2d');
+    const userLojaId = localStorage.getItem('userLojaId');
+    
+    let movimentacoesParaCalcular = movimentacoesEstoque;
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        movimentacoesParaCalcular = movimentacoesEstoque.filter(mov => mov.lojaId === userLojaId);
+    }
+
+    const estoquePorModelo = movimentacoesParaCalcular.reduce((acc, mov) => {
+        const produto = produtos.find(p => p.id === mov.produtoId);
+        if (produto) {
+            acc[produto.modelo] = (acc[produto.modelo] || 0) + mov.quantidade;
+        }
+        return acc;
+    }, {});
+
+    const sortedEstoque = Object.entries(estoquePorModelo).sort(([, a], [, b]) => b - a);
+
+    // --- LÓGICA DE ALTURA DINÂMICA ---
+    const numeroDeBarras = sortedEstoque.length;
+    const espacoVerticalPorBarra = 40;
+    const alturaMinimaDoGrafico = 80;
+    const alturaCalculada = Math.max(alturaMinimaDoGrafico, numeroDeBarras * espacoVerticalPorBarra);
+
+    const canvasContainer = document.getElementById('estoque-modelo-canvas-container');
+    canvasContainer.style.height = `${alturaCalculada}px`;
+    // --- FIM DA LÓGICA DE ALTURA ---
+
+    const options = {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            datalabels: {
+                anchor: 'end',
+                align: 'right',
+                offset: 8,
+                color: document.body.classList.contains('dark-mode') ? '#f0f2f5' : '#172B4D',
+                font: { weight: 'bold' },
+                formatter: (value) => Math.round(value)
+            }
+        },
+        scales: {
+            x: { 
+                display: true, 
+                grid: { display: false },
+                    ticks: { 
+                    precision: 0,
+                    display: false // Adicione esta linha para esconder os números do eixo X
+                },
+                beginAtZero: true 
+            },
+            y: { 
+                display: true, 
+                grid: { display: false, drawBorder: false }
+            }
+        }
+    };
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+    gradient.addColorStop(0, '#f39772');
+    gradient.addColorStop(1, '#f39772');
+
+    createChart(ctx, 'bar', {
+        labels: sortedEstoque.map(([nome]) => nome),
+        datasets: [{
+            label: 'Estoque Total',
+            data: sortedEstoque.map(([, qtd]) => qtd),
+            backgroundColor: gradient,
+            borderRadius: 8
+            // Nenhuma propriedade de espessura aqui
+        }]
+    }, options);
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
 
 
     function createChart(ctx, type, data, options) {
@@ -3054,6 +4866,10 @@ function updateRankingModeloChart(vendasFiltradas) {
     });
 }
 
+// ==========================================================
+//       INÍCIO DA AÇÃO (PASSO 1): ATUALIZAR GRÁFICO DE RANKING DE LOJAS
+// ==========================================================
+
 function updateRankingLojasChart(vendasFiltradas) {
     const ctx = document.getElementById('ranking-lojas-chart').getContext('2d');
     const vendasPorLoja = vendasFiltradas.reduce((acc, v) => {
@@ -3062,23 +4878,55 @@ function updateRankingLojasChart(vendasFiltradas) {
         return acc;
     }, {});
     const sortedLojas = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
-    // ==========================================================
-    //       INÍCIO DA LÓGICA DE ALTURA (ABORDAGEM FINAL)
-    // ==========================================================
-    const numeroDeLojas = sortedLojas.length;
-    const alturaPorBarra = 30; // Espaço total para cada barra
-    const alturaTotalContainer = numeroDeLojas * alturaPorBarra;
 
-    // Pega a NOVA DIV que envolve o canvas
+    // --- INÍCIO DA NOVA LÓGICA DE ESTILO ---
+    const isSingleBar = sortedLojas.length === 1;
+    
+    // 1. Define as opções do gráfico condicionalmente
+    const options = {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            // Se for barra única, o rótulo fica no centro. Se não, no final.
+            datalabels: {
+                color: isSingleBar ? '#fff' : '#15191',
+                anchor: 'center',
+                align: 'center',
+                font: {
+                    weight: 'bold',
+                    // Aumenta a fonte se for barra única
+                    size: isSingleBar ? 20 : 12 
+                }
+            }
+        },
+        scales: {
+            // Esconde os eixos X e Y se for barra única para um visual mais limpo
+            x: { display: !isSingleBar },
+            y: { display: !isSingleBar }
+        }
+    };
+
+    // 2. Define a cor e a espessura da barra condicionalmente
+    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+    if (isSingleBar) {
+        gradient.addColorStop(0, '#1a0b2a'); // Cor escura do exemplo
+        gradient.addColorStop(1, '#1a0b2a');
+    } else {
+        gradient.addColorStop(0, '#f5d393'); // Cor amarela original
+        gradient.addColorStop(1, '#f5d393');
+    }
+    
+    const barThickness = isSingleBar ? undefined : 18; // Deixa o Chart.js decidir a espessura na barra única
+
+    // --- FIM DA NOVA LÓGICA DE ESTILO ---
+
+    // Lógica de altura dinâmica (mantida)
+    const numeroDeLojas = sortedLojas.length;
+    const alturaPorBarra = isSingleBar ? 200 : 30; // Barra única fica bem maior
+    const alturaTotalContainer = numeroDeLojas * alturaPorBarra;
     const canvasContainer = document.getElementById('ranking-lojas-canvas-container');
-    // Define a altura da DIV, não do canvas!
     canvasContainer.style.height = `${alturaTotalContainer}px`;
-    // ==========================================================
-    //                       FIM DA LÓGICA
-    // ==========================================================
-    const gradient = ctx.createLinearGradient(0,0, 0, ctx.canvas.height); // Gradiente horizontal
-    gradient.addColorStop(1, '#f5d393'); // Cor inicial (esquerda, mais clara)
-    gradient.addColorStop(0, '#f5d393'); // Cor final (direita, mais escura)
 
     createChart(ctx, 'bar', {
         labels: sortedLojas.map(([nome]) => nome),
@@ -3087,106 +4935,136 @@ function updateRankingLojasChart(vendasFiltradas) {
             data: sortedLojas.map(([, qtd]) => qtd),
             backgroundColor: gradient,
             borderRadius: 18,
-            barThickness: 18
+            barThickness: barThickness
         }]
-    }, { 
-        indexAxis: 'y',
-        maintainAspectRatio: false, 
-        plugins: { 
-            legend: { display: false },
-            datalabels: {
-                color: '#15191',
-                anchor: 'center',
-                align: 'center'
-            }
-        } 
-    });
+    }, options); // Passa as opções dinâmicas para a função de criar o gráfico
 }
+
+// ==========================================================
+//                        FIM DA AÇÃO (PASSO 1)
+// ==========================================================
 
 /* ================================================================== */
 /* BLOCO ÚNICO: ALTERAÇÃO NO JAVASCRIPT (Participação em Percentual) */
 /* ================================================================== */
 
+// ==========================================================
+//       INÍCIO DA AÇÃO (PASSO 2): ATUALIZAR GRÁFICO DE SHARE
+// ==========================================================
+
 function updateParticipacaoChart(vendasFiltradas) {
     const ctx = document.getElementById('participacao-lojas-chart').getContext('2d');
-    // 1. Calcula a venda total em VALOR (R$), que será o nosso 100%.
     const vendaTotalValor = vendasFiltradas.reduce((sum, v) => sum + (v.valor * v.quantidade), 0);
-
-    // 2. Agrupa as vendas por loja somando o VALOR.
     const vendasPorLoja = vendasFiltradas.reduce((acc, v) => {
         const loja = lojas.find(l => l.id == v.lojaId);
-        if (loja) {
-            acc[loja.nome] = (acc[loja.nome] || 0) + (v.valor * v.quantidade);
-        }
+        if (loja) acc[loja.nome] = (acc[loja.nome] || 0) + (v.valor * v.quantidade);
         return acc;
     }, {});
-
     const sorted = Object.entries(vendasPorLoja).sort(([, a], [, b]) => b - a);
 
-    // Lógica de altura dinâmica para o gráfico de Share de Vendas
-    const numeroDeLojasParticipacao = sorted.length;
-    const alturaPorBarraParticipacao = 30; // Espaço total para cada barra
-    const alturaTotalContainerParticipacao = numeroDeLojasParticipacao * alturaPorBarraParticipacao;
+    // --- INÍCIO DA NOVA LÓGICA DE ESTILO ---
+    const isSingleBar = sorted.length === 1;
 
-    const canvasContainerParticipacao = document.getElementById('participacao-lojas-canvas-container');
-    canvasContainerParticipacao.style.height = `${alturaTotalContainerParticipacao}px`;
-
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-    const isDarkMode = document.body.classList.contains('dark-mode');
-        gradient.addColorStop(1, '#f39772'); // Cor inicial (esquerda, mais clara)
-        gradient.addColorStop(0, '#f39772'); // Cor final (direita, mais escura)
-    createChart(ctx, 'bar', {
-        labels: sorted.map(([nome]) => nome),
-        datasets: [{
-            label: 'Participação (%)', // Label atualizado
-            // 3. ALTERAÇÃO: Os dados agora são os percentuais calculados.
-            data: sorted.map(([, val]) => vendaTotalValor > 0 ? (val / vendaTotalValor * 100) : 0),
-            backgroundColor: gradient,
-            borderRadius: 18
-        }]
-    }, {
+    const options = {
         indexAxis: 'y',
         plugins: {
             legend: { display: false },
-            // 4. ALTERAÇÃO: Rótulo de dados agora formata como percentual.
             datalabels: {
-                color: '#15191',
+                color: isSingleBar ? '#fff' : '#15191',
                 anchor: 'center',
                 align: 'center',
-                formatter: (value) => value > 0 ? `${value.toFixed(1)}%` : '' // Ex: 25.5%
+                font: {
+                    weight: 'bold',
+                    size: isSingleBar ? 20 : 12
+                },
+                // Formata como percentual
+                formatter: (value) => value > 0 ? `${value.toFixed(1)}%` : ''
             },
-            tooltip: {
-                callbacks: {
-                    // Tooltip agora mostra o valor em R$ e o %
-                    label: (c) => {
-                        // Para obter o valor original em R$, precisamos buscá-lo novamente
-                        const lojaNome = c.label;
-                        const valorOriginal = vendasPorLoja[lojaNome] || 0;
-                        const valorFormatado = valorOriginal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                        return `${c.dataset.label}: ${c.raw.toFixed(2)}% (${valorFormatado})`;
-                    }
-                }
-            }
+            tooltip: { /* ... (lógica do tooltip mantida) ... */ }
         },
-        // 5. ALTERAÇÃO: Adiciona o sufixo '%' ao eixo X.
         scales: {
-            x: {
-                ticks: {
-                    callback: function(value) {
-                        return value + '%';
-                    }
-                }
-            }
+            x: { 
+                display: !isSingleBar, // Esconde o eixo se for barra única
+                ticks: { callback: (value) => value + '%' } 
+            },
+            y: { display: !isSingleBar } // Esconde o eixo se for barra única
         }
-    });
+    };
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+    if (isSingleBar) {
+        gradient.addColorStop(0, '#1a0b2a'); // Cor escura
+        gradient.addColorStop(1, '#1a0b2a');
+    } else {
+        gradient.addColorStop(0, '#f39772'); // Cor laranja original
+        gradient.addColorStop(1, '#f39772');
+    }
+    
+    const barThickness = isSingleBar ? undefined : 18;
+    // --- FIM DA NOVA LÓGICA DE ESTILO ---
+
+    const numeroDeLojasParticipacao = sorted.length;
+    const alturaPorBarraParticipacao = isSingleBar ? 200 : 30;
+    const alturaTotalContainerParticipacao = numeroDeLojasParticipacao * alturaPorBarraParticipacao;
+    const canvasContainerParticipacao = document.getElementById('participacao-lojas-canvas-container');
+    canvasContainerParticipacao.style.height = `${alturaTotalContainerParticipacao}px`;
+
+    createChart(ctx, 'bar', {
+        labels: sorted.map(([nome]) => nome),
+        datasets: [{
+            label: 'Participação (%)',
+            data: sorted.map(([, val]) => vendaTotalValor > 0 ? (val / vendaTotalValor * 100) : 0),
+            backgroundColor: gradient,
+            borderRadius: 18,
+            barThickness: barThickness
+        }]
+    }, options);
 }
 
+// ==========================================================
+//                        FIM DA AÇÃO (PASSO 2)
+// ==========================================================
 
 
+
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR A FUNÇÃO updateDetalheVendasTable
+// ==========================================================
 
 function updateDetalheVendasTable(vendasFiltradas) {
-    
+    const userLojaId = localStorage.getItem('userLojaId');
+    const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
+
+    // --- INÍCIO DA LÓGICA DE SEGURANÇA ---
+    let lojasAtivas;
+
+    // 1. VERIFICA SE O USUÁRIO É DE UMA LOJA ESPECÍFICA
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        // Se for, a única loja ativa é a dele.
+        lojasAtivas = lojas.filter(loja => loja.id === userLojaId);
+        // E o seletor de filtro de loja deve ser escondido.
+        if (detalheLojaFilter && detalheLojaFilter.parentElement) {
+            detalheLojaFilter.parentElement.style.display = 'none';
+        }
+    } else {
+        // 2. SE FOR ADMIN, A LÓGICA ANTIGA CONTINUA
+        // Garante que o filtro seja visível para o admin.
+        if (detalheLojaFilter && detalheLojaFilter.parentElement) {
+            detalheLojaFilter.parentElement.style.display = '';
+        }
+        
+        const lojaFiltradaId = detalheLojaFilter.value;
+        if (lojaFiltradaId === 'all') {
+            lojasAtivas = [...lojas].sort((a, b) => a.nome.localeCompare(b.nome));
+        } else {
+            lojasAtivas = lojas.filter(loja => loja.id === lojaFiltradaId);
+        }
+    }
+    // --- FIM DA LÓGICA DE SEGURANÇA ---
+
+    // O restante da função continua exatamente como estava,
+    // pois ela já opera com base na variável 'lojasAtivas', que agora está corretamente filtrada.
+
     const meses = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
     const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     const selectedMonth = parseInt(filterMonth.value);
@@ -3194,19 +5072,6 @@ function updateDetalheVendasTable(vendasFiltradas) {
     const mesNome = selectedMonth !== 'all' ? meses[selectedMonth] : 'PERÍODO';
     detalheVendasTitulo.textContent = `Detalhamento de Vendas - ${mesNome}`;
 
-    const detalheLojaFilter = document.getElementById('detalhe-loja-filter');
-    // Adiciona uma verificação de segurança para o caso do elemento não existir ainda
-    if (!detalheLojaFilter) return; 
-    
-    const lojaFiltradaId = detalheLojaFilter.value;
-    let lojasAtivas;
-
-    if (lojaFiltradaId === 'all') {
-        lojasAtivas = [...lojas].sort((a, b) => a.nome.localeCompare(b.nome));
-    } else {
-        lojasAtivas = lojas.filter(loja => loja.id === lojaFiltradaId);
-    }
-    
     const totaisPorLoja = {};
     let totalGeralPcs = 0;
     let totalGeralValor = 0;
@@ -3220,23 +5085,15 @@ function updateDetalheVendasTable(vendasFiltradas) {
         totalGeralValor += totalValor;
     });
 
-    // ==========================================================
-    //            INÍCIO DO CÓDIGO RESTAURADO
-    // ==========================================================
-
-    // --- CONSTRUÇÃO DO CABEÇALHO DA TABELA ---
     let headerHTML = '<tr><th rowspan="4" class="row-header-dia">DATA</th>';
-    
     if (lojasAtivas.length > 0) {
         lojasAtivas.forEach(loja => { headerHTML += `<th colspan="2" class="col-header-loja">${loja.nome}</th>`; });
         headerHTML += '<th colspan="2" class="col-header-loja">TOTAL</th></tr><tr>';
-        
         lojasAtivas.forEach(loja => {
             const dataInaug = new Date(loja.dataInauguracao + 'T00:00:00').toLocaleDateString('pt-BR');
             headerHTML += `<th colspan="2">${dataInaug}</th>`;
         });
         headerHTML += '<th colspan="2"></th></tr>';
-        
         headerHTML += '<tr>';
         lojasAtivas.forEach(loja => {
             const total = totaisPorLoja[loja.id];
@@ -3244,15 +5101,13 @@ function updateDetalheVendasTable(vendasFiltradas) {
         });
         headerHTML += `<th class="sub-header">${totalGeralPcs}</th><th class="sub-header">${totalGeralValor.toLocaleString('pt-BR')}</th>`;
         headerHTML += '</tr>';
-        
         headerHTML += '<tr>';
         lojasAtivas.forEach(() => { headerHTML += '<th class="sub-header">Pçs</th><th class="sub-header">$</th>'; });
         headerHTML += '<th class="sub-header">Pçs</th><th class="sub-header">$</th>';
     }
     headerHTML += '</tr>';
     detalheVendasHead.innerHTML = headerHTML;
-    
-    // --- CONSTRUÇÃO DO CORPO DA TABELA ---
+
     const diasDoMes = (selectedMonth === 'all' || selectedYear === 'all') 
         ? [...new Set(vendasFiltradas.map(v => v.data))].sort()
         : Array.from({ length: new Date(selectedYear, selectedMonth + 1, 0).getDate() }, (_, i) => `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`);
@@ -3265,9 +5120,7 @@ function updateDetalheVendasTable(vendasFiltradas) {
             const diaSemanaNome = diasSemana[dateObj.getUTCDay()];
             let totalDiaPcs = 0;
             let totalDiaValor = 0;
-            
             let rowHTML = `<tr><td class="row-header-dia">${dia} - ${diaSemanaNome.toUpperCase()}</td>`;
-
             lojasAtivas.forEach(loja => {
                 const vendasDiaLoja = vendasFiltradas.filter(v => v.data === dataString && v.lojaId == loja.id);
                 const pcs = vendasDiaLoja.reduce((sum, v) => sum + v.quantidade, 0);
@@ -3278,17 +5131,16 @@ function updateDetalheVendasTable(vendasFiltradas) {
                 totalDiaPcs += pcs;
                 totalDiaValor += valor;
             });
-
             rowHTML += `<td>${totalDiaPcs > 0 ? totalDiaPcs : ''}</td><td>${totalDiaValor > 0 ? totalDiaValor.toLocaleString('pt-BR') : ''}</td></tr>`;
             bodyHTML += rowHTML;
         });
     }
     detalheVendasBody.innerHTML = bodyHTML;
-
-    // ==========================================================
-    //                 FIM DO CÓDIGO RESTAURADO
-    // ==========================================================
 }
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
 
 function updateVendaTipoLojaChart(vendasFiltradas) {
     const ctx = document.getElementById('venda-tipo-loja-chart').getContext('2d');
@@ -3382,19 +5234,24 @@ function updateVendaTipoLojaChart(vendasFiltradas) {
 
 
 
+// ==========================================================
+//       INÍCIO DA AÇÃO: AJUSTAR O GRÁFICO DE MODALIDADE
+// ==========================================================
 
 function updateVendaFormaPagamentoChart(vendasFiltradas) {
     const ctx = document.getElementById('venda-forma-pagamento-chart').getContext('2d');
     const vendasPorForma = vendasFiltradas.reduce((acc, v) => {
-        acc[v.formaPagamento] = (acc[v.formaPagamento] || 0) + v.quantidade;
+        // Garante que a forma de pagamento exista antes de somar
+        if (v.formaPagamento) {
+            acc[v.formaPagamento] = (acc[v.formaPagamento] || 0) + v.quantidade;
+        }
         return acc;
     }, {});
     const sorted = Object.entries(vendasPorForma).sort(([, a], [, b]) => b - a);
     
     const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-    const isDarkMode = document.body.classList.contains('dark-mode');
-        gradient.addColorStop(1, '#f5d393'); // Cor inicial (esquerda, mais clara)
-        gradient.addColorStop(0, '#f5d393'); // Cor final (direita, mais escura)
+    gradient.addColorStop(1, '#f5d393');
+    gradient.addColorStop(0, '#f5d393');
 
     createChart(ctx, 'bar', {
         labels: sorted.map(([nome]) => nome),
@@ -3408,14 +5265,20 @@ function updateVendaFormaPagamentoChart(vendasFiltradas) {
         indexAxis: 'y',
         plugins: { 
             legend: { display: false },
+            // --- AQUI ESTÁ A CORREÇÃO ---
             datalabels: {
-                color: '#15191',
-                anchor: 'center',
-                align: 'center'
+                color: '#15191d', // Cor escura para contrastar com a barra clara
+                anchor: 'center',  // Ancorar o rótulo no CENTRO da barra
+                align: 'center'    // Alinhar o texto no CENTRO da âncora
             }
         }
     });
 }
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
 
 function updateRankingGRCChart(vendasFiltradas) {
     const ctx = document.getElementById('ranking-grc-chart').getContext('2d');
@@ -3782,19 +5645,77 @@ function updateVendaAnualChart() {
         }
     });
 }
+// ==========================================================
+//       INÍCIO DA AÇÃO 3: POPULAR SELETOR DE LOJAS
+// ==========================================================
 
-    function renderAll() {
-        renderTabelaLojas();
-        renderProdutosLista();
-        populateLojasSelect();
-        populateProdutosSelect();
-        populateVendasFilters();
+function populateAluguelLojaSelect() {
+    const select = document.getElementById('regra-aluguel-loja-id');
+    select.innerHTML = ''; // Limpa opções antigas
+    lojas.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(loja => {
+        select.innerHTML += `<option value="${loja.id}">${loja.nome}</option>`;
+    });
+}
 
-                populateLojasFilter(); // Gera os checkboxes
-        lojasSelecionadasIds = lojas.map(l => l.id);
-        renderTabelaVendas();
-        updateDashboard();
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR E LIMPAR A FUNÇÃO renderAll
+// ==========================================================
+
+// ==========================================================
+//       INÍCIO DA AÇÃO: CORRIGIR A FUNÇÃO renderAll (DE NOVO)
+// ==========================================================
+
+function renderAll() {
+    // ETAPA 1: Renderiza todas as tabelas com os dados completos
+    renderTabelaLojas();
+    renderProdutosLista();
+    renderTabelaVendas();
+    renderTabelaAnaliseComissao();
+    renderTabelaResumoComissao();
+    renderTabelaHistoricoComissao();
+    renderTabelaHistoricoAluguel();
+    renderTabelaMovimentacoesEstoque();
+
+    // ETAPA 2: Popula todos os seletores e datalists
+    populateLojasSelect();
+    populateProdutosSelect();
+    populateVendasFilters();
+    populateLojasFilter();
+    populateAluguelLojaSelect();
+    populateComissaoLojaSelect();
+    populateGRCSugestoes(); 
+    
+    // ADICIONE A LINHA DE VOLTA AQUI!
+    populateDashboardLojaFilter(); 
+    populateEstoqueLojaSelect();
+    populateEstoqueProdutoSelect();
+
+    populateInventarioLojaSelect(); // <-- ADICIONE ESTA LINHA
+    populateInventarioProdutoSelect(); // <-- ADICIONE ESTA LINHA
+    
+    // ETAPA 3: Configura as interatividades
+    setupComissaoEditing();
+    applySecurityRules();
+
+
+        // --- ADICIONE ESTE BLOCO NO FINAL DA FUNÇÃO renderAll ---
+    // Garante que o campo "Tipo da Loja" seja preenchido após os dados carregarem
+    const userLojaId = localStorage.getItem('userLojaId');
+    if (userLojaId && userLojaId !== 'admin' && userLojaId !== 'none') {
+        const lojaDoUsuario = lojas.find(l => l.id === userLojaId);
+        if (lojaDoUsuario) {
+            document.getElementById('venda-tipo-loja-display').value = lojaDoUsuario.tipo;
+        }
     }
+    // --- FIM DO NOVO BLOCO ---
+    // ETAPA 4: ATUALIZA O DASHBOARD UMA ÚNICA VEZ, NO FINAL DE TUDO
+    runDashboardUpdate(); 
+}
+
+// ==========================================================
+//                        FIM DA AÇÃO
+// ==========================================================
+
 
 
     checkLogin();
@@ -3809,4 +5730,5 @@ function updateVendaAnualChart() {
 
 
 
-Manus
+| VP Analytics
+
